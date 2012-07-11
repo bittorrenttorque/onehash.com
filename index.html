@@ -1,0 +1,57 @@
+    <!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Hash</title>
+        <!-- collection of general dependencies -->
+        <script type="text/javascript" src="javascripts/lib/jquery.js"></script>
+        <script type="text/javascript" src="javascripts/lib/json2.js"></script>
+        <script type="text/javascript" src="javascripts/lib/underscore.js"></script>
+        <script type="text/javascript" src="javascripts/lib/backbone.js"></script>
+
+        <!-- pwmckenna/backbrace submodule -->
+        <script type="text/javascript" src="javascripts/backbrace/backbrace.js"></script>
+        <!-- pwmckenna/btapp submodule -->
+        <script type="text/javascript" src="javascripts/btapp/btapp.js"></script>
+        <script type="text/javascript" src="javascripts/btapp/client.btapp.js"></script>
+        <script type="text/javascript" src="javascripts/btapp/plugin.btapp.js"></script>
+        <script type="text/javascript" src="javascripts/btapp/pairing.btapp.js"></script>
+        <!-- pwmckenna/jStorage submodule -->
+        <script type="text/javascript" src="javascripts/jStorage/jstorage.min.js"></script>
+
+        <link href="http://vjs.zencdn.net/c/video-js.css" rel="stylesheet">
+        <script src="http://vjs.zencdn.net/c/video.js"></script>
+
+        <script type="text/javascript" src="javascripts/application.js"></script>
+
+        <link rel="stylesheet" type="text/css" href="stylesheets/bootstrap.min.css" />
+        <link rel="stylesheet" type="text/css" href="stylesheets/application.css" />
+    </head>
+    <body>
+
+    <!-- templates -->
+    <script type="text/template" id="video_template">
+        <video class="video-js vjs-default-skin" controls
+        preload="auto" width="600" height="360"
+        data-setup="{}">
+        </video>
+    </script>
+
+    <script type="text/template" id="input_template">
+        <form class="well form-inline">
+          <input type="text" class="input-large" placeholder="magnet link / torrent url">
+          <button type="submit" class="btn">Sign in</button>
+        </form>
+    </script>
+
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <a href="" class="brand"><strong>oneHash</strong> <span class="toolbox"></span></a>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+    </div>
+    </body>
+</html>

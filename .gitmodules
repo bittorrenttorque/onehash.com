@@ -1,0 +1,9 @@
+[submodule "javascripts/btapp"]
+	path = javascripts/btapp
+	url = git://github.com/bittorrenttorque/btapp.git
+[submodule "javascripts/backbrace"]
+	path = javascripts/backbrace
+	url = git://github.com/bittorrenttorque/backbrace.git
+[submodule "javascripts/jStorage"]
+	path = javascripts/jStorage
+	url = git://github.com/pwmckenna/jStorage.git
