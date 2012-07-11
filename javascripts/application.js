@@ -29,7 +29,6 @@ jQuery(function() {
             this.model.on('destroy', this.destroy, this);
         },
         destroy: function() {
-            console.log('destroy');
             var player = _V_(this.id);
             this.unbindPlayerEvents(player);
             this.remove();
@@ -107,7 +106,6 @@ jQuery(function() {
 
     if(window.location.hash) {
         window.btapp = new Btapp();
-        btapp.on('all', _.bind(console.log, console));
         btapp.connect({
             product: 'uTorrent',
             plugin: false
