@@ -31,11 +31,13 @@
 
     <!-- templates -->
     <script type="text/template" id="video_template">
-        <video id="<%= id %>" class="video-js vjs-default-skin" controls
-            preload="auto" width="300" height="200"
-            data-setup="{}">
-        </video>
-        <p><%= name %></p>
+        <div class="video_container">
+            <video id="<%= id %>" class="video-js vjs-default-skin" controls
+                preload="auto" width="300" height="200"
+                data-setup="{}">
+            </video>
+            <p><%= name %></p>
+        </div>
     </script>
 
     <script type="text/template" id="input_template">

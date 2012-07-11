@@ -1,5 +1,5 @@
 jQuery(function() {
-    _V_.EVENTS = [
+    EVENTS = [
         'loadstart', 
         'loadedmetadata', 
         'loadeddata',
@@ -15,6 +15,13 @@ jQuery(function() {
         'error',
         'fullscreenchange'
     ];
+
+    ERROR_CODES = {
+        1: 'MEDIA_ERR_ABORTED',
+        2: 'MEDIA_ERR_NETWORK',
+        3: 'MEDIA_ERR_DECODE',
+        4: 'MEDIA_ERR_SRC_NOT_SUPPORTED'
+    };
 
     var FileView = Backbone.View.extend({
         initialize: function() {
@@ -43,20 +50,21 @@ jQuery(function() {
                 player.src(this.model.get('streaming_url'));
             }, this));
         },
-        onPlayerEvent: function(event) {
-            console.log(event);
+        onPlayerEvent: function(event, data) {
+            console.log(event, data);
             if(event === 'error') {
+                console.log('error: ' + ERROR_CODES[data.originalEvent.currentTarget.error.code]);
                 console.log('cannot play ' + this.model.get('name'));
                 this.destroy();
             }
         },
         bindPlayerEvents: function(player) {
-            _.each(_V_.EVENTS, function(event) {
+            _.each(EVENTS, function(event) {
                 player.addEvent(event, _.bind(this.onPlayerEvent, this, event));
             }, this);
         },
         unbindPlayerEvents: function(player) {
-             _.each(_V_.EVENTS, function(event) {
+             _.each(EVENTS, function(event) {
                 player.removeEvent(event, _.bind(this.onPlayerEvent, this, event));
             }, this);
         }
