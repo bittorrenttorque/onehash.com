@@ -19,8 +19,8 @@
         <!-- pwmckenna/jStorage submodule -->
         <script type="text/javascript" src="javascripts/jStorage/jstorage.min.js"></script>
 
-        <link href="http://vjs.zencdn.net/c/video-js.css" rel="stylesheet">
-        <script src="http://vjs.zencdn.net/c/video.js"></script>
+        <link href="video-js/video-js.css" rel="stylesheet">
+        <script src="video-js/video.js"></script>
 
         <script type="text/javascript" src="javascripts/application.js"></script>
 
@@ -31,16 +31,19 @@
 
     <!-- templates -->
     <script type="text/template" id="video_template">
-        <video class="video-js vjs-default-skin" controls
-        preload="auto" width="600" height="360"
-        data-setup="{}">
+        <video id="<%= id %>" class="video-js vjs-default-skin" controls
+            preload="auto" width="640" height="264" poster="<%= image %>"
+            data-setup="{}">
+            <source src="<%= video %>" type='video/avi'>
         </video>
+        <p><%= video %></p><br>
+        <p><%= name %></p>
     </script>
 
     <script type="text/template" id="input_template">
         <form class="well form-inline">
           <input type="text" class="input-large" placeholder="magnet link / torrent url">
-          <button type="submit" class="btn">Sign in</button>
+          <button type="submit" class="btn">Stream</button>
         </form>
     </script>
 

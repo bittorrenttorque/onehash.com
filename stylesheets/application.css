@@ -5,6 +5,10 @@ body > .container > div {
   margin-right: auto;
 }
 
+body > .container > form {
+  text-align: center;
+}
+
 
 /* line 31, ../sass/darkstrap.scss */
 .well,
