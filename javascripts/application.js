@@ -1,19 +1,64 @@
 jQuery(function() {
-    var videos = 0;
+    _V_.EVENTS = [
+        'loadstart', 
+        'loadedmetadata', 
+        'loadeddata',
+        'loadedalldata',
+        'play',
+        'pause',
+        'timeupdate',
+        'ended',
+        'durationchange',
+        'progress',
+        'resize',
+        'volumechange',
+        'error',
+        'fullscreenchange'
+    ];
+
     var FileView = Backbone.View.extend({
         initialize: function() {
             this.template = _.template($('#video_template').html());
+            this.model.on('destroy', this.destroy, this);
+        },
+        destroy: function() {
+            console.log('destroy');
+            var player = _V_(this.id);
+            this.unbindPlayerEvents(player);
+            this.remove();
         },
         render: function() {
-            var id = 'video' + (++videos);
-            console.log('video id: ' + id);
+            this.id = 'video' + Math.floor(Math.random() * 1024);
             this.$el.html(this.template({
-                image: 'http://video-js.zencoder.com/oceans-clip.jpg',
-                video: this.model.get('streaming_url'),
                 name: this.model.get('name'),
-                id: id
+                id: this.id
             }));
+            _.defer(_.bind(this.ready, this));
             return this;
+        },
+        ready: function() {
+            var player = _V_(this.id);
+            player.ready(_.bind(function() {
+                this.bindPlayerEvents(player);
+                player.src(this.model.get('streaming_url'));
+            }, this));
+        },
+        onPlayerEvent: function(event) {
+            console.log(event);
+            if(event === 'error') {
+                console.log('cannot play ' + this.model.get('name'));
+                this.destroy();
+            }
+        },
+        bindPlayerEvents: function(player) {
+            _.each(_V_.EVENTS, function(event) {
+                player.addEvent(event, _.bind(this.onPlayerEvent, this, event));
+            }, this);
+        },
+        unbindPlayerEvents: function(player) {
+             _.each(_V_.EVENTS, function(event) {
+                player.removeEvent(event, _.bind(this.onPlayerEvent, this, event));
+            }, this);
         }
     });
 
@@ -25,7 +70,6 @@ jQuery(function() {
             this.$el.html(this.template({
             }));
             this.$el.find('form').submit(_.bind(function(event) {
-                event.preventDefault();
                  window.location = '#' + this.$el.find('input').val();
             }, this));
             return this;
@@ -33,7 +77,8 @@ jQuery(function() {
     });
 
     if(window.location.hash) {
-        btapp = new Btapp();
+        window.btapp = new Btapp();
+        btapp.on('all', _.bind(console.log, console));
         btapp.connect();
 
         btapp.live('torrent * file * properties', function(properties) {
