@@ -200,10 +200,7 @@ jQuery(function() {
 
         var status = new StatusView({model: btapp});
 
-        btapp.connect({
-            product: 'uTorrent',
-            plugin: false
-        });
+        btapp.connect();
 
         btapp.live('torrent * file * properties', function(properties, file, file_list, torrent, torrent_list) {
             console.log('uri: ' + torrent.get('properties').get('uri'));
