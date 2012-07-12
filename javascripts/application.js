@@ -23,6 +23,10 @@ jQuery(function() {
         4: 'MEDIA_ERR_SRC_NOT_SUPPORTED'
     };
 
+    SUPPORTED_EXTENSIONS = [
+         'mp4', 'avi', 'mkv'
+    ];
+
     var FileView = Backbone.View.extend({
         initialize: function() {
             this.template = _.template($('#video_template').html());
@@ -104,23 +108,30 @@ jQuery(function() {
         }
     });
 
-    if(window.location.hash) {
+    var link = window.location.hash.substring(1);
+    console.log('link: ' + link);
+    if(link) {
         window.btapp = new Btapp();
         btapp.connect({
             product: 'uTorrent',
             plugin: false
         });
 
-        btapp.live('torrent * file * properties', function(properties) {
-            var name = properties.get('name');
-            if(name.substr(name.length - 3) === 'mp4') {
-                var view = new FileView({model: properties});
-                $('body > .container').append(view.render().el);
+        btapp.live('torrent * file * properties', function(properties, file, file_list, torrent, torrent_list) {
+            console.log('uri: ' + torrent.get('properties').get('uri'));
+            if(torrent.get('properties').get('uri') === link) {
+                var name = properties.get('name');
+                console.log('file in the correct torrent: ' + name);
+                if(_.include(SUPPORTED_EXTENSIONS, name.substr(name.length - 3))) {
+                    var view = new FileView({model: properties});
+                    $('body > .container').append(view.render().el);
+                }
             }
         });
 
         btapp.on('add:add', function(add) {
-            add.torrent(window.location.hash.substring(1));
+            console.log('adding: ' + link);
+            add.torrent(link);
         });
     } else {
         var input = new InputView();
