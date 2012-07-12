@@ -19,6 +19,14 @@
         <!-- pwmckenna/jStorage submodule -->
         <script type="text/javascript" src="javascripts/jStorage/jstorage.min.js"></script>
 
+        <!-- audio support -->
+        <link rel="stylesheet" href="audio-js/audio-js.css" type="text/css" media="all" title="Audio JS" charset="utf-8">
+        <link rel="stylesheet" href="audio-js/skins/hu.css" type="text/css" media="all" title="Audio JS" charset="utf-8">
+        <link rel="stylesheet" href="audio-js/skins/tube.css" type="text/css" media="all" title="Audio JS" charset="utf-8">
+        <link rel="stylesheet" href="audio-js/skins/vim.css" type="text/css" media="all" title="Audio JS" charset="utf-8">
+        <script src="audio-js/audio.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- video support -->
         <link href="video-js/video-js.css" rel="stylesheet">
         <script src="video-js/video.js"></script>
 
@@ -37,6 +45,14 @@
                 data-setup="{}">
             </video>
             <p><%= name %></p>
+        </div>
+    </script>
+
+    <script type="text/template" id="audio_template">
+        <div class="audio-js-box vim-css">
+            <audio class="audio-js" controls preload>
+                <source src="<%= url %>">
+            </audio>
         </div>
     </script>
 

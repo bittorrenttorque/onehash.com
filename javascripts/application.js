@@ -23,9 +23,13 @@ jQuery(function() {
         4: 'MEDIA_ERR_SRC_NOT_SUPPORTED'
     };
 
-    SUPPORTED_EXTENSIONS = [
+    SUPPORTED_VIDEO_EXTENSIONS = [
          'mp4', 'avi', 'mkv'
     ];
+
+    SUPPORTED_AUDIO_EXTENSIONS = [
+        'mp3'
+    ]
 
     STATUS_MESSAGES = {
         'plugin:plugin_installed': 'plugin installed',
@@ -42,7 +46,22 @@ jQuery(function() {
         'client:error': 'error',
     };
 
-    var FileView = Backbone.View.extend({
+    var AudioFileView = Backbone.View.extend({
+        initialize: function() {
+            this.template = _.template($('#audio_template').html());
+            this.model.on('destroy', this.remove, this);
+        },
+
+        render: function() {
+            this.$el.html(this.template({
+                url: this.model.get('streaming_url')
+            }));
+            new AudioJS(this.$el.find('audio')[0]);
+            return this;
+        }
+    });
+
+    var VideoFileView = Backbone.View.extend({
         initialize: function() {
             this.template = _.template($('#video_template').html());
             this.model.on('destroy', this.destroy, this);
@@ -144,19 +163,26 @@ jQuery(function() {
     var link = window.location.hash.substring(1);
     console.log('link: ' + link);
     if(link) {
+        AudioJS.setup();
         window.btapp = new Btapp();
 
         var status = new StatusView({model: btapp});
 
-        btapp.connect({});
+        btapp.connect({
+            product: 'uTorrent',
+            plugin: false
+        });
 
         btapp.live('torrent * file * properties', function(properties, file, file_list, torrent, torrent_list) {
             console.log('uri: ' + torrent.get('properties').get('uri'));
             if(torrent.get('properties').get('uri') === link) {
                 var name = properties.get('name');
                 console.log('file in the correct torrent: ' + name);
-                if(_.include(SUPPORTED_EXTENSIONS, name.substr(name.length - 3))) {
-                    var view = new FileView({model: properties});
+                if(_.include(SUPPORTED_VIDEO_EXTENSIONS, name.substr(name.length - 3))) {
+                    var view = new VideoFileView({model: properties});
+                    $('body > .container').append(view.render().el);
+                } else if(_.include(SUPPORTED_AUDIO_EXTENSIONS, name.substr(name.length - 3))) {
+                    var view = new AudioFileView({model: properties});
                     $('body > .container').append(view.render().el);
                 }
             }

@@ -7,3 +7,6 @@
 [submodule "javascripts/jStorage"]
 	path = javascripts/jStorage
 	url = git://github.com/pwmckenna/jStorage.git
+[submodule "audio-js"]
+	path = audio-js
+	url = git://github.com/dz0ny/AudioJS.git
