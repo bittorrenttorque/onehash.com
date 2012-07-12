@@ -1,5 +1,5 @@
 jQuery(function() {
-    EVENTS = [
+    var EVENTS = [
         'loadstart', 
         'loadedmetadata', 
         'loadeddata',
@@ -16,22 +16,22 @@ jQuery(function() {
         'fullscreenchange'
     ];
 
-    ERROR_CODES = {
+    var ERROR_CODES = {
         1: 'MEDIA_ERR_ABORTED',
         2: 'MEDIA_ERR_NETWORK',
         3: 'MEDIA_ERR_DECODE',
         4: 'MEDIA_ERR_SRC_NOT_SUPPORTED'
     };
 
-    SUPPORTED_VIDEO_EXTENSIONS = [
+    var SUPPORTED_VIDEO_EXTENSIONS = [
          'mp4', 'avi', 'mkv'
     ];
 
-    SUPPORTED_AUDIO_EXTENSIONS = [
+    var SUPPORTED_AUDIO_EXTENSIONS = [
         'mp3'
-    ]
+    ];
 
-    STATUS_MESSAGES = {
+    var STATUS_MESSAGES = {
         'plugin:plugin_installed': 'plugin installed',
         'plugin:plugin_running': 'plugin running',
         'plugin:client_installed': 'client installed',
@@ -46,6 +46,32 @@ jQuery(function() {
         'client:error': 'error',
     };
 
+    var TRACKERS = [
+        'udp://tracker.publicbt.com:80/announce',
+        'http://bt.rghost.net/announce',
+        'http://exodus.desync.com/announce',
+        'http://tracker.ccc.de/announce',
+        'http://tracker.publichd.eu/announce',
+        'http://tracker.torrentbay.to:6969/announce',
+        'http://tracker.yify-torrents.com/announce',
+        'udp://ipv4.tracker.harry.lu:80/announce',
+        'udp://tracker.ccc.de/announce',
+        'udp://tracker.ccc.de:80/announce',
+        'udp://tracker.djhsearch.co.cc:80/announce',
+    ];    
+
+    function isInfoHash(hash) {
+        return typeof hash === 'string' && hash.length === 40;
+    }
+
+    function getMagnetLink(hash) {
+        var link = 'magnet:?xt=urn:btih:' + hash;
+        _.each(TRACKERS, function(tracker) {
+            link += '&tr=' + tracker;
+        });
+        return link;
+    }
+
     var AudioFileView = Backbone.View.extend({
         initialize: function() {
             this.template = _.template($('#audio_template').html());
@@ -54,7 +80,8 @@ jQuery(function() {
 
         render: function() {
             this.$el.html(this.template({
-                url: this.model.get('streaming_url')
+                url: this.model.get('streaming_url'),
+                name: this.model.get('name')
             }));
             new AudioJS(this.$el.find('audio')[0]);
             return this;
@@ -163,6 +190,11 @@ jQuery(function() {
     var link = window.location.hash.substring(1);
     console.log('link: ' + link);
     if(link) {
+        //support info hashes
+        if(isInfoHash(link)) {
+            link = getMagnetLink(link);
+        }
+
         AudioJS.setup();
         window.btapp = new Btapp();
 
