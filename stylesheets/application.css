@@ -5,3 +5,7 @@ body > .container {
 body > .container .well {
     text-align: center;
 }
+
+.toolbox {
+	font-size: 12pt;
+}

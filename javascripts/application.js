@@ -27,6 +27,21 @@ jQuery(function() {
          'mp4', 'avi', 'mkv'
     ];
 
+    STATUS_MESSAGES = {
+        'plugin:plugin_installed': 'plugin installed',
+        'plugin:plugin_running': 'plugin running',
+        'plugin:client_installed': 'client installed',
+        'pairing:attempt': 'checking client port',
+        //'pairing:check_version': 'checking client version',
+        'plugin:client_running': 'client running',
+        'pairing:attempt': 'pairing attempt',
+        'pairing:found': 'pairing found',
+        'client:connected': 'client connecting',
+        'client:disconnected': 'client disconnected',
+        'sync': 'client connected',
+        'client:error': 'error',
+    };
+
     var FileView = Backbone.View.extend({
         initialize: function() {
             this.template = _.template($('#video_template').html());
@@ -108,14 +123,32 @@ jQuery(function() {
         }
     });
 
+    var StatusView = Backbone.View.extend({
+        initialize: function() {
+            this.status = 'uninitialized';
+            this.model.on('all', this.update, this);
+        },
+        update: function(e) {
+            console.log(e);
+            if(e in STATUS_MESSAGES) {
+                this.status = STATUS_MESSAGES[e];
+                this.render();
+            }
+        },
+        render: function() {
+            $('.toolbox').text(this.status);
+            return this;
+        }
+    });
+
     var link = window.location.hash.substring(1);
     console.log('link: ' + link);
     if(link) {
         window.btapp = new Btapp();
-        btapp.connect({
-            product: 'uTorrent',
-            plugin: false
-        });
+
+        var status = new StatusView({model: btapp});
+
+        btapp.connect({});
 
         btapp.live('torrent * file * properties', function(properties, file, file_list, torrent, torrent_list) {
             console.log('uri: ' + torrent.get('properties').get('uri'));
