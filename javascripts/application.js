@@ -184,7 +184,7 @@ jQuery(function() {
         }
     });
 
-    function connectProduct(product, link) {
+    function connectProduct(product, link, plugin) {
         console.log('connectProduct(' + product + ',' + link + ')');
         var btapp = new Btapp();
         window[product] = btapp;
@@ -194,7 +194,7 @@ jQuery(function() {
 
         btapp.connect({
             product: product,
-            plugin: false
+            plugin: plugin
         });
 
         btapp.live('torrent * file * properties', function(properties, file, file_list, torrent, torrent_list) {
@@ -227,9 +227,9 @@ jQuery(function() {
         }
 
         AudioJS.setup();
-        connectProduct('uTorrent', link);
-        connectProduct('Torque', link);
-        connectProduct('BitTorrent', link);
+        connectProduct('uTorrent', link, false);
+        connectProduct('Torque', link, true);
+        connectProduct('BitTorrent', link, false);
     } else {
         var input = new InputView();
         $('body > .container').append(input.render().el);
