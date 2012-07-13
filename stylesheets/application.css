@@ -13,3 +13,19 @@ body > .container .well {
 .file_info {
 	color: #E36B23;
 }
+
+.vjs-big-play-button {
+	background: #00ADEF !important;
+}
+
+.vjs-controls {
+	margin: 0;
+	width: auto !important;
+}
+
+.navbar-fixed-top {
+	border-bottom: 1px solid #888;
+}
+.navbar-inner {
+	background: rgba(23, 35, 34, 0.5) !important
+}

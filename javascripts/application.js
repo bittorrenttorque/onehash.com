@@ -187,20 +187,17 @@ jQuery(function() {
         }
     });
 
-    var link = window.location.hash.substring(1);
-    console.log('link: ' + link);
-    if(link) {
-        //support info hashes
-        if(isInfoHash(link)) {
-            link = getMagnetLink(link);
-        }
-
-        AudioJS.setup();
-        window.btapp = new Btapp();
+    function connectProduct(product, link) {
+        console.log('connectProduct(' + product + ',' + link + ')');
+        var btapp = new Btapp();
+        window[product] = btapp;
 
         var status = new StatusView({model: btapp});
 
-        btapp.connect();
+        btapp.connect({
+            product: product,
+            plugin: false
+        });
 
         btapp.live('torrent * file * properties', function(properties, file, file_list, torrent, torrent_list) {
             console.log('uri: ' + torrent.get('properties').get('uri'));
@@ -221,6 +218,19 @@ jQuery(function() {
             console.log('adding: ' + link);
             add.torrent(link);
         });
+    }
+
+    var link = window.location.hash.substring(1);
+    console.log('link: ' + link);
+    if(link) {
+        //support info hashes
+        if(isInfoHash(link)) {
+            link = getMagnetLink(link);
+        }
+
+        AudioJS.setup();
+        connectProduct('uTorrent', link);
+        //connectProduct('Torque', link);
     } else {
         var input = new InputView();
         $('body > .container').append(input.render().el);
