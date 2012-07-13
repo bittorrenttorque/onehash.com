@@ -225,4 +225,6 @@ jQuery(function() {
         var input = new InputView();
         $('body > .container').append(input.render().el);
     }
+
+    $(window).bind('hashchange', location.reload);
 });
