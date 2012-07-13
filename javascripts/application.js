@@ -166,6 +166,7 @@ jQuery(function() {
     });
 
     var StatusView = Backbone.View.extend({
+        tagName: 'span',
         initialize: function() {
             this.status = 'uninitialized';
             this.model.on('all', this.update, this);
@@ -178,7 +179,7 @@ jQuery(function() {
             }
         },
         render: function() {
-            $('.toolbox').text(this.status);
+            this.$el.text(',  ' + this.options.product + ' ( ' + this.status + ' ) ');
             return this;
         }
     });
@@ -188,7 +189,8 @@ jQuery(function() {
         var btapp = new Btapp();
         window[product] = btapp;
 
-        var status = new StatusView({model: btapp});
+        var status = new StatusView({model: btapp, product: product});
+        $('.toolbox').append(status.render().el);
 
         btapp.connect({
             product: product,
@@ -226,7 +228,8 @@ jQuery(function() {
 
         AudioJS.setup();
         connectProduct('uTorrent', link);
-        //connectProduct('Torque', link);
+        connectProduct('Torque', link);
+        connectProduct('BitTorrent', link);
     } else {
         var input = new InputView();
         $('body > .container').append(input.render().el);
