@@ -226,5 +226,5 @@ jQuery(function() {
         $('body > .container').append(input.render().el);
     }
 
-    $(window).bind('hashchange', location.reload);
+    $(window).bind('hashchange', _.debounce(_.bind(location.reload, location)));
 });
