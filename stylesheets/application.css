@@ -1,5 +1,6 @@
 body > .container {
     margin-top: 80px;
+    margin-bottom: 80px;
 }
 
 body > .container .well {
@@ -26,6 +27,19 @@ body > .container .well {
 .navbar-fixed-top {
 	border-bottom: 1px solid #888;
 }
-.navbar-inner {
-	background: rgba(23, 35, 34, 0.5) !important
+.navbar-fixed-top .navbar-inner {
+	background: rgba(23, 35, 34) !important
+}
+
+.company {
+	font-family: 'Oswald',sans-serif;
+	color: #ECE9D7;
+}
+
+.navbar-fixed-bottom {
+	border-top: 1px solid #888;
+}
+
+.navbar-fixed-bottom .container {
+	padding: 10px 0;
 }
