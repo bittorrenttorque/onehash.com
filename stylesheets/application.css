@@ -43,3 +43,11 @@ body > .container .well {
 .navbar-fixed-bottom .container {
 	padding: 10px 0;
 }
+
+.navbar-inner {
+	background-color: #222;
+}
+
+.input-large {
+	width: 300px;
+}
