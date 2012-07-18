@@ -109,7 +109,7 @@ jQuery(function() {
         render: function() {
             this.$el.html(this.template({
                 url: this.model.get('streaming_url'),
-                name: this.model.get('name')
+                name: filename_from_filepath(this.model.get('name'))
             }));
             new AudioJS(this.$el.find('audio')[0]);
             return this;
@@ -129,7 +129,7 @@ jQuery(function() {
         render: function() {
             this.id = 'video' + Math.floor(Math.random() * 1024);
             this.$el.html(this.template({
-                name: this.model.get('name'),
+                name: filename_from_filepath(this.model.get('name')),
                 id: this.id
             }));
             _.defer(_.bind(this.ready, this));
