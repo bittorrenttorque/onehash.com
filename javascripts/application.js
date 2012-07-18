@@ -40,6 +40,10 @@ jQuery(function() {
         'client:disconnected': 'client disconnected',
         'sync': 'client connected',
         'client:error': 'error',
+        'input:creating_torrent': 'creating torrent',
+        'input:torrent_created': 'torrent created',
+        'input:redirecting': 'redirecting',
+        'input:waiting_for_folder_selection': 'waiting for selection'
     };
 
     var TRACKERS = [
@@ -66,6 +70,34 @@ jQuery(function() {
             link += '&tr=' + tracker;
         });
         return link;
+    }
+
+    function create_torrent_filename(arg) {
+        var paths = typeof arg === 'string' ? [arg] : arg;
+        var default_path, filename;
+        default_path = paths[0];
+        filename = filename_from_filepath(default_path);
+        if (paths.length > 1) {
+            return remove_extension(filename) + '_and_others';
+        } else {
+            return filename;
+        }
+    }
+
+    function remove_extension(filename) {
+        var nameArray;
+        nameArray = filename.split('.');
+        if (nameArray.length > 1) {
+            return _.first(nameArray, nameArray.length - 1).join('.');
+        } else {
+            return nameArray[0];
+        }
+    }
+
+    function filename_from_filepath(filepath) {
+        var filename;
+        filename = _.last(filepath.split('\\'));
+        return _.last(filename.split('/'));
     }
 
     var AudioFileView = Backbone.View.extend({
@@ -156,10 +188,42 @@ jQuery(function() {
             this.template = _.template($('#input_template').html());
         },
         render: function() {
-            this.$el.html(this.template({
-            }));
+            this.$el.html(this.template({}));
             this.$el.find('form').submit(_.bind(function(event) {
                  window.location = '#' + this.$el.find('input').val();
+            }, this));
+            this.$el.find('#create').click(_.bind(function(event) {
+                event.preventDefault();
+                var product = 'Torque';
+
+                var btapp = new Btapp;
+                btapp.connect({
+                    queries: ['btapp/create/', 'btapp/browseforfolder/'],
+                    product: product,
+                    poll_frequency: 500
+                });
+
+                var status = new StatusView({model: btapp, product: product});
+                $('.toolbox').append(status.render().el);
+
+                var browse_ready = function() {
+                    btapp.off('add:bt:browseforfolder', browse_ready);
+                    btapp.trigger('input:waiting_for_folder_selection');
+                    btapp.browseforfolder(function(folder) {
+                        var create_callback = function(data) {
+                            btapp.disconnect();
+                            btapp.trigger('input:torrent_created');
+                            setTimeout(_.bind(btapp.trigger, btapp, 'input:redirecting'), 1000);
+                            setTimeout(function() {
+                                window.location = '#' + data;
+                            }, 4000);
+                        }
+
+                        btapp.create(create_torrent_filename(folder), [folder], create_callback);
+                        btapp.trigger('input:creating_torrent');
+                    });
+                };
+                btapp.on('add:bt:browseforfolder', browse_ready);
             }, this));
             return this;
         }
@@ -172,7 +236,6 @@ jQuery(function() {
             this.model.on('all', this.update, this);
         },
         update: function(e) {
-            console.log(e);
             if(e in STATUS_MESSAGES) {
                 this.status = STATUS_MESSAGES[e];
                 this.render();
@@ -184,10 +247,11 @@ jQuery(function() {
         }
     });
 
-    function connectProduct(product, link, plugin) {
-        console.log('connectProduct(' + product + ',' + link + ')');
+    function connectProduct(product, plugin, hash) {
+        var link = isInfoHash(link) ? getMagnetLink(link) : hash;
+
+        console.log('connectProduct(' + product + ',' + hash + ')');
         var btapp = new Btapp();
-        window[product] = btapp;
 
         var status = new StatusView({model: btapp, product: product});
         $('.toolbox').append(status.render().el);
@@ -197,39 +261,50 @@ jQuery(function() {
             plugin: plugin
         });
 
-        btapp.live('torrent * file * properties', function(properties, file, file_list, torrent, torrent_list) {
-            console.log('uri: ' + torrent.get('properties').get('uri'));
-            if(torrent.get('properties').get('uri') === link) {
-                var name = properties.get('name');
-                console.log('file in the correct torrent: ' + name);
-                if(_.include(SUPPORTED_VIDEO_EXTENSIONS, name.substr(name.length - 3))) {
-                    var view = new VideoFileView({model: properties});
-                    $('body > .container').append(view.render().el);
-                } else if(_.include(SUPPORTED_AUDIO_EXTENSIONS, name.substr(name.length - 3))) {
-                    var view = new AudioFileView({model: properties});
-                    $('body > .container').append(view.render().el);
-                }
+        var selector = 'torrent * file * properties';
+        var file_callback = function(properties) {
+            var name = properties.get('name');
+            console.log('file in the correct torrent: ' + name);
+            if(_.include(SUPPORTED_VIDEO_EXTENSIONS, name.substr(name.length - 3))) {
+                var view = new VideoFileView({model: properties});
+                $('body > .container').append(view.render().el);
+            } else if(_.include(SUPPORTED_AUDIO_EXTENSIONS, name.substr(name.length - 3))) {
+                var view = new AudioFileView({model: properties});
+                $('body > .container').append(view.render().el);
             }
-        });
+        } 
+        var live_callback = function(properties, file, file_list, torrent, torrent_list) {
+            console.log('uri: ' + torrent.get('properties').get('uri'));
+            console.log('download_url: ' + torrent.get('properties').get('download_url'));
+            console.log('info_hash: ' + torrent.id);
 
-        btapp.on('add:add', function(add) {
+            if( (isInfoHash(link) && torrent.id === hash) || 
+                torrent.get('properties').get('download_url') === link ||
+                torrent.get('properties').get('uri') === link
+            ) {
+                file_callback(properties);
+            }
+        };
+
+        btapp.live(selector, live_callback);
+
+        var add_callback = function(add) {
+            btapp.off('add:add', add_callback);
             console.log('adding: ' + link);
             add.torrent(link);
-        });
+        }
+        btapp.on('add:add', add_callback);
+
+        return btapp;
     }
 
-    var link = window.location.hash.substring(1);
-    console.log('link: ' + link);
-    if(link) {
-        //support info hashes
-        if(isInfoHash(link)) {
-            link = getMagnetLink(link);
-        }
-
+    var hash = window.location.hash.substring(1);
+    console.log('hash: ' + hash);
+    if(hash) {
         AudioJS.setup();
-        connectProduct('uTorrent', link, false);
-        connectProduct('Torque', link, true);
-        connectProduct('BitTorrent', link, false);
+        //window.uTorrent = connectProduct('uTorrent', false, link);
+        window.Torque = connectProduct('Torque', true, hash);
+        //window.BitTorrent = connectProduct('BitTorrent', false, link);
     } else {
         var input = new InputView();
         $('body > .container').append(input.render().el);
