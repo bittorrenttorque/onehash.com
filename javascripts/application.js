@@ -308,15 +308,6 @@ jQuery(function() {
     } else {
         var input = new InputView();
         $('body > .container').append(input.render().el);
-
-        jQuery.ajax({
-            url: 'content/featuredcontent.json',
-            crossDomain: true,
-            dataType: 'json',
-            success: function(data) {
-                debugger;
-            }
-        });
     }
 
     $(window).bind('hashchange', _.debounce(_.bind(location.reload, location)));
