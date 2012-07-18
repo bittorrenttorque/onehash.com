@@ -7,6 +7,10 @@ body > .container .well {
     text-align: center;
 }
 
+body > .container .well span {
+    padding: 0 20px;
+}
+
 .toolbox {
 	font-size: 12pt;
 }
