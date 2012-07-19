@@ -43,7 +43,8 @@ jQuery(function() {
         'input:creating_torrent': 'creating torrent',
         'input:torrent_created': 'torrent created',
         'input:redirecting': 'redirecting',
-        'input:waiting_for_folder_selection': 'waiting for selection'
+        'input:waiting_for_folder_selection': 'waiting for selection',
+        'input:no_files_selected': 'no files selected'
     };
 
     var TRACKERS = [
@@ -198,7 +199,7 @@ jQuery(function() {
 
                 var btapp = new Btapp;
                 btapp.connect({
-                    queries: ['btapp/create/', 'btapp/browseforfolder/'],
+                    queries: ['btapp/create/', 'btapp/browseforfiles/'],
                     product: product,
                     poll_frequency: 500
                 });
@@ -207,9 +208,14 @@ jQuery(function() {
                 $('.toolbox').append(status.render().el);
 
                 var browse_ready = function() {
-                    btapp.off('add:bt:browseforfolder', browse_ready);
-                    btapp.trigger('input:waiting_for_folder_selection');
-                    btapp.browseforfolder(function(folder) {
+                    btapp.off('add:bt:browseforfiles', browse_ready);
+                    btapp.trigger('input:waiting_for_file_selection');
+                    btapp.browseforfiles(function(files) {
+                        var files = _.values(files);
+                        if(files.length === 0) {
+                            btapp.trigger('input:no_files_selected');
+                            return;
+                        }
                         var create_callback = function(data) {
                             btapp.disconnect();
                             btapp.trigger('input:torrent_created');
@@ -219,11 +225,13 @@ jQuery(function() {
                             }, 4000);
                         }
 
-                        btapp.create(create_torrent_filename(folder), [folder], create_callback);
+                        var torrent_name = create_torrent_filename(files);
+                        console.log('btapp.create(' + torrent_name + ', ' + JSON.stringify(files) + ')'));a
+                        btapp.create(torrent_name, files, create_callback);
                         btapp.trigger('input:creating_torrent');
                     });
                 };
-                btapp.on('add:bt:browseforfolder', browse_ready);
+                btapp.on('add:bt:browseforfiles', browse_ready);
             }, this));
             return this;
         }
