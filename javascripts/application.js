@@ -226,7 +226,7 @@ jQuery(function() {
                         }
 
                         var torrent_name = create_torrent_filename(files);
-                        console.log('btapp.create(' + torrent_name + ', ' + JSON.stringify(files) + ')'));a
+                        console.log('btapp.create(' + torrent_name + ', ' + JSON.stringify(files) + ')'));
                         btapp.create(torrent_name, files, create_callback);
                         btapp.trigger('input:creating_torrent');
                     });
