@@ -29,7 +29,7 @@ body > .container .well span {
 }
 
 .navbar-fixed-top {
-	border-bottom: 1px solid #888;
+	border-bottom: 1px solid #494949;
 }
 .navbar-fixed-top .navbar-inner {
 	background: rgba(23, 35, 34) !important
@@ -41,7 +41,7 @@ body > .container .well span {
 }
 
 .navbar-fixed-bottom {
-	border-top: 1px solid #888;
+	border-top: 1px solid #494949;
 }
 
 .navbar-fixed-bottom .container {
