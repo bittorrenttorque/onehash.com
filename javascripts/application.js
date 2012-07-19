@@ -101,23 +101,48 @@ jQuery(function() {
         return _.last(filename.split('/'));
     }
 
+    var TorrentView = Backbone.View.extend({
+        initialize: function() {
+            this.template = _.template($('#torrent_template').html());
+            this.model.on('add:properties', this.render, this);
+            this.model.get('properties').on('change:seeds_connected, change:peers_connected, change:file_count, change:hash', this.render, this);
+        },
+        destroy: function() {
+            this.model.off('change', this.render, this);
+            this.remove();
+        },
+        render: function() {
+            this.$el.html(this.template({
+                properties: this.model.get('properties').toJSON()
+            }));
+            return this;
+        }
+    });
+
     var AudioFileView = Backbone.View.extend({
+        className: 'audio',
         initialize: function() {
             this.template = _.template($('#audio_template').html());
             this.model.on('destroy', this.remove, this);
         },
-
+        destroy: function() {
+            this.model.off('destroy', this.remove, this);
+            this.remove();
+        },
         render: function() {
+            $('.last').removeClass('last');
             this.$el.html(this.template({
                 url: this.model.get('streaming_url'),
                 name: filename_from_filepath(this.model.get('name'))
             }));
+            this.$el.addClass('last');
             new AudioJS(this.$el.find('audio')[0]);
             return this;
         }
     });
 
     var VideoFileView = Backbone.View.extend({
+        className: 'video',
         initialize: function() {
             this.template = _.template($('#video_template').html());
             this.model.on('destroy', this.destroy, this);
@@ -128,11 +153,13 @@ jQuery(function() {
             this.remove();
         },
         render: function() {
+            $('.last').removeClass('last');
             this.id = 'video' + Math.floor(Math.random() * 1024);
             this.$el.html(this.template({
                 name: filename_from_filepath(this.model.get('name')),
                 id: this.id
             }));
+            this.$el.addClass('last');
             _.defer(_.bind(this.ready, this));
             return this;
         },
@@ -187,14 +214,13 @@ jQuery(function() {
     var InputView = Backbone.View.extend({
         initialize: function() {
             this.template = _.template($('#input_template').html());
-            _.bindAll(this, 'create');
         },
         render: function() {
             this.$el.html(this.template({}));
             this.$el.find('form').submit(_.bind(function(event) {
                  window.location = '#' + this.$el.find('input').val();
             }, this));
-            this.$el.find('#create').on('click', this.create);
+            this.$el.find('#create').on('click', this.create, this);
             return this;
         },
         create: function(event) {
@@ -224,7 +250,7 @@ jQuery(function() {
                         btapp.trigger('input:no_files_selected');
                         setTimeout(function() {
                             btapp.disconnect();
-                            status.remove();
+                            status.destroy();
                             button.removeClass('disabled');
                         }, 3000);
                         return;
@@ -235,7 +261,7 @@ jQuery(function() {
                         setTimeout(_.bind(btapp.trigger, btapp, 'input:redirecting'), 1000);
                         setTimeout(function() {
                             btapp.disconnect();
-                            status.remove();
+                            status.destroy();
                             window.location = '#' + data;
                         }, 3000);
                     }
@@ -255,6 +281,10 @@ jQuery(function() {
         initialize: function() {
             this.status = 'uninitialized';
             this.model.on('all', this.update, this);
+        },
+        destroy: function() {
+            this.model.off('all', this.update, this);
+            this.remove();
         },
         update: function(e) {
             if(e in STATUS_MESSAGES) {
@@ -282,7 +312,6 @@ jQuery(function() {
             plugin: plugin
         });
 
-        var selector = 'torrent * file * properties';
         var file_callback = function(properties) {
             var name = properties.get('name');
             console.log('file in the correct torrent: ' + name);
@@ -294,20 +323,24 @@ jQuery(function() {
                 $('body > .container').append(view.render().el);
             }
         } 
-        var live_callback = function(properties, file, file_list, torrent, torrent_list) {
-            console.log('uri: ' + torrent.get('properties').get('uri'));
-            console.log('download_url: ' + torrent.get('properties').get('download_url'));
-            console.log('info_hash: ' + torrent.id);
 
-            if( (isInfoHash(link) && torrent.id === hash) || 
-                torrent.get('properties').get('download_url') === link ||
-                torrent.get('properties').get('uri') === link
-            ) {
-                file_callback(properties);
+        btapp.live('torrent * properties', function(properties, torrent) {
+            if(!properties || typeof properties !== 'object' || typeof properties.has === 'undefined') {
+                return;
             }
-        };
+            if( (isInfoHash(link) && torrent.id === hash) ||
+                properties.get('download_url') === link ||
+                properties.get('uri') === link
+            ) {
+                var view = new TorrentView({model: torrent});
+                $('body > .container').append(view.render().el);
 
-        btapp.live(selector, live_callback);
+                torrent.live('file * properties', function(file_properties) {
+                    file_callback(file_properties);
+                });
+            }
+        });
+
 
         var add_callback = function(add) {
             btapp.off('add:add', add_callback);
@@ -323,9 +356,9 @@ jQuery(function() {
     console.log('hash: ' + hash);
     if(hash) {
         AudioJS.setup();
-        //window.uTorrent = connectProduct('uTorrent', false, link);
+        window.uTorrent = connectProduct('uTorrent', false, hash);
         window.Torque = connectProduct('Torque', true, hash);
-        //window.BitTorrent = connectProduct('BitTorrent', false, link);
+        window.BitTorrent = connectProduct('BitTorrent', false, hash);
     } else {
         var input = new InputView();
         $('body > .container').append(input.render().el);

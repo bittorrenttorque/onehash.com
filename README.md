@@ -1,4 +1,4 @@
-utorrenttoolbox
+onehash.com
 ===============
 
-a toolbox of utorrent settings using [btapp.js](https://github.com/bittorrenttorque/btapp)
+a simple way to consume and share torrent contents

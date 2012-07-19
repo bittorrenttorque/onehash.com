@@ -1,6 +1,7 @@
 body > .container {
     margin-top: 100px;
     margin-bottom: 80px;
+    overflow-x: hidden;
 }
 
 body > .container .well {
@@ -54,4 +55,42 @@ body > .container .well span {
 
 .input-large {
 	width: 300px;
+}
+
+.torrent_container {
+	height: 96px;
+	width: auto;
+	background-color: #222;
+	border-left: 1px solid #111;
+	border-top: 1px solid #111;
+	border-right: 1px solid #43515F;
+	overflow: hidden;
+	font-size: 11px;
+	font-family: 'Helvetic Neue';
+}
+
+.torrent_container img {
+	height: 64px;
+	width: 64px;
+	float: left;
+	margin: 16px;
+	background-color: #414141;
+	border-right: 1px solid #111;
+	border-bottom: 1px solid #111;
+	border-left: 1px solid #43515F;
+	border-top: 1px solid #43515F;
+}
+
+.torrent_container .torrent_name {
+	font-size: 14px;
+}
+
+.audio, .video {
+	border-top: 1px solid #43515F;
+	border-bottom: 1px solid #14171A;
+	padding: 15px 0;
+}
+
+.audio.last, .video.last {
+	border-bottom: 0;
 }
