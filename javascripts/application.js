@@ -187,53 +187,66 @@ jQuery(function() {
     var InputView = Backbone.View.extend({
         initialize: function() {
             this.template = _.template($('#input_template').html());
+            _.bindAll(this, 'create');
         },
         render: function() {
             this.$el.html(this.template({}));
             this.$el.find('form').submit(_.bind(function(event) {
                  window.location = '#' + this.$el.find('input').val();
             }, this));
-            this.$el.find('#create').click(_.bind(function(event) {
-                event.preventDefault();
-                var product = 'Torque';
-
-                var btapp = new Btapp;
-                btapp.connect({
-                    queries: ['btapp/create/', 'btapp/browseforfiles/'],
-                    product: product,
-                    poll_frequency: 500
-                });
-
-                var status = new StatusView({model: btapp, product: product});
-                $('.toolbox').append(status.render().el);
-
-                var browse_ready = function() {
-                    btapp.off('add:bt:browseforfiles', browse_ready);
-                    btapp.trigger('input:waiting_for_file_selection');
-                    btapp.browseforfiles(function(files) {
-                        var files = _.values(files);
-                        if(files.length === 0) {
-                            btapp.trigger('input:no_files_selected');
-                            return;
-                        }
-                        var create_callback = function(data) {
-                            btapp.disconnect();
-                            btapp.trigger('input:torrent_created');
-                            setTimeout(_.bind(btapp.trigger, btapp, 'input:redirecting'), 1000);
-                            setTimeout(function() {
-                                window.location = '#' + data;
-                            }, 4000);
-                        }
-
-                        var torrent_name = create_torrent_filename(files);
-                        console.log('btapp.create(' + torrent_name + ', ' + JSON.stringify(files) + ')');
-                        btapp.create(torrent_name, files, create_callback);
-                        btapp.trigger('input:creating_torrent');
-                    });
-                };
-                btapp.on('add:bt:browseforfiles', browse_ready);
-            }, this));
+            this.$el.find('#create').on('click', this.create);
             return this;
+        },
+        create: function(event) {
+            if(this.$el.find('#create').hasClass('disabled')) return;
+            var button = this.$el.find('#create');
+            button.addClass('disabled');
+            event.preventDefault();
+            var product = 'Torque';
+
+            var btapp = new Btapp;
+            btapp.connect({
+                queries: ['btapp/create/', 'btapp/browseforfiles/'],
+                product: product,
+                poll_frequency: 500
+            });
+
+            var status = new StatusView({model: btapp, product: product});
+            $('.toolbox').append(status.render().el);
+
+            var browse_ready = function() {
+                btapp.off('add:bt:browseforfiles', browse_ready);
+
+                btapp.trigger('input:waiting_for_file_selection');
+                btapp.browseforfiles(function(files) {
+                    var files = _.values(files);
+                    if(files.length === 0) {
+                        btapp.trigger('input:no_files_selected');
+                        setTimeout(function() {
+                            btapp.disconnect();
+                            status.remove();
+                            button.removeClass('disabled');
+                        }, 3000);
+                        return;
+                    }
+                    var create_callback = function(data) {
+                        btapp.disconnect();
+                        btapp.trigger('input:torrent_created');
+                        setTimeout(_.bind(btapp.trigger, btapp, 'input:redirecting'), 1000);
+                        setTimeout(function() {
+                            btapp.disconnect();
+                            status.remove();
+                            window.location = '#' + data;
+                        }, 3000);
+                    }
+
+                    var torrent_name = create_torrent_filename(files);
+                    console.log('btapp.create(' + torrent_name + ', ' + JSON.stringify(files) + ')');
+                    btapp.create(torrent_name, files, create_callback);
+                    btapp.trigger('input:creating_torrent');
+                });
+            };
+            btapp.on('add:bt:browseforfiles', browse_ready);
         }
     });
 
