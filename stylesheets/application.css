@@ -66,23 +66,27 @@ body > .container .well span {
 	border-right: 1px solid #43515F;
 	overflow: hidden;
 	font-size: 11px;
-	font-family: 'Helvetic Neue';
+	font: 14px helvetica,arial,sans-serif;
+	color: #AAA;
+	z-index: 2001;
 }
 
 .torrent_container img {
-	height: 64px;
-	width: 64px;
+	height: 80px;
+	width: 80px;
 	float: left;
-	margin: 16px;
-	background-color: #414141;
-	border-right: 1px solid #111;
-	border-bottom: 1px solid #111;
-	border-left: 1px solid #43515F;
-	border-top: 1px solid #43515F;
+	margin: 6px;
+	border: 2px solid #414141;
 }
 
-.torrent_container .torrent_name {
-	font-size: 14px;
+.torrent_container div {
+	height: 100%;
+}
+
+.torrent_name {
+	font-size: 48px;
+	line-height: 48px;
+	margin: 24px;
 }
 
 .audio, .video {

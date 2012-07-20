@@ -54,18 +54,17 @@
 </script>
     </head>
     <body>
-        <a href="https://github.com/bittorrenttorque/onehash.com"><img style="position: fixed; top: 0; right: 0; border: 0; z-index: 9999" src="images/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a>
+        <a href="https://github.com/bittorrenttorque/onehash.com"><img style="position: fixed; top: 0; right: 0; border: 0; z-index: 2000" src="images/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a>
 
     <!-- templates -->
     <script type="text/template" id="torrent_template">
         <div class="torrent_container">
             <img src="images/icon.png" />
             <div>
-                <span class="torrent_name"><%= properties.name %><span><br>
-                Info Hash: <%= properties.hash %><br>
-                Files: <%= properties.file_count %><br>
-                Peers: <%= properties.peers_connected %><br>
-                Seeds: <%= properties.seeds_connected %><br>
+                <span class="torrent_name"><%= properties.name %></span>
+                <span class="torrent_progress"><%= properties.progress / 10.0 %>%</span>
+                <span class="torrent_peers"><%= properties.connected_peers %></span>
+                <span class="torrent_seeds"><%= properties.connected_seeds %></span>
             </div>
         </div>
     </script>
