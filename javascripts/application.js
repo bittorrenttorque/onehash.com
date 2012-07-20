@@ -101,6 +101,21 @@ jQuery(function() {
         return _.last(filename.split('/'));
     }
 
+    var MediaContainerView = Backbone.View.extend({
+        className: 'media container',
+        initialize: function() {
+            this.template = _.template($('#media_container_template').html());
+            AudioJS.setup();
+            window.uTorrent = connectProduct('uTorrent', false, hash);
+            window.Torque = connectProduct('Torque', true, hash);
+            window.BitTorrent = connectProduct('BitTorrent', false, hash);
+        },
+        render: function() {
+            this.$el.html(this.template({}));
+            return this;
+        }
+    });
+
     var TorrentView = Backbone.View.extend({
         initialize: function() {
             this.template = _.template($('#torrent_template').html());
@@ -130,12 +145,10 @@ jQuery(function() {
             this.remove();
         },
         render: function() {
-            $('.last').removeClass('last');
             this.$el.html(this.template({
                 url: this.model.get('streaming_url'),
                 name: filename_from_filepath(this.model.get('name'))
             }));
-            this.$el.addClass('last');
             new AudioJS(this.$el.find('audio')[0]);
             return this;
         }
@@ -153,13 +166,11 @@ jQuery(function() {
             this.remove();
         },
         render: function() {
-            $('.last').removeClass('last');
             this.id = 'video' + Math.floor(Math.random() * 1024);
             this.$el.html(this.template({
                 name: filename_from_filepath(this.model.get('name')),
                 id: this.id
             }));
-            this.$el.addClass('last');
             _.defer(_.bind(this.ready, this));
             return this;
         },
@@ -171,7 +182,6 @@ jQuery(function() {
             }, this));
         },
         onPlayerEvent: function(event, data) {
-            console.log(event, data);
             if(event === 'error') {
                 console.log('error: ' + ERROR_CODES[data.originalEvent.currentTarget.error.code]);
                 console.log('cannot play ' + this.model.get('name'));
@@ -208,6 +218,17 @@ jQuery(function() {
              _.each(EVENTS, function(event) {
                 player.removeEvent(event, _.bind(this.onPlayerEvent, this, event));
             }, this);
+        }
+    });
+
+    var InputContainerView = Backbone.View.extend({
+        className: 'input container',
+        initialize: function() {
+            var input = new InputView();
+            this.$el.append(input.render().el);
+        },
+        render: function() {
+            return this;
         }
     });
 
@@ -314,13 +335,12 @@ jQuery(function() {
 
         var file_callback = function(properties) {
             var name = properties.get('name');
-            console.log('file in the correct torrent: ' + name);
             if(_.include(SUPPORTED_VIDEO_EXTENSIONS, name.substr(name.length - 3))) {
                 var view = new VideoFileView({model: properties});
-                $('body > .container').append(view.render().el);
+                $('body > .media.container .media').append(view.render().el);
             } else if(_.include(SUPPORTED_AUDIO_EXTENSIONS, name.substr(name.length - 3))) {
                 var view = new AudioFileView({model: properties});
-                $('body > .container').append(view.render().el);
+                $('body > .media.container .media').append(view.render().el);
             }
         } 
 
@@ -333,7 +353,7 @@ jQuery(function() {
                 properties.get('uri') === link
             ) {
                 var view = new TorrentView({model: torrent});
-                $('body > .container').append(view.render().el);
+                $('body > .media.container .media_header').append(view.render().el);
 
                 torrent.live('file * properties', function(file_properties) {
                     file_callback(file_properties);
@@ -344,7 +364,6 @@ jQuery(function() {
 
         var add_callback = function(add) {
             btapp.off('add:add', add_callback);
-            console.log('adding: ' + link);
             add.torrent(link);
         }
         btapp.on('add:add', add_callback);
@@ -353,15 +372,12 @@ jQuery(function() {
     }
 
     var hash = window.location.hash.substring(1);
-    console.log('hash: ' + hash);
     if(hash) {
-        AudioJS.setup();
-        window.uTorrent = connectProduct('uTorrent', false, hash);
-        window.Torque = connectProduct('Torque', true, hash);
-        window.BitTorrent = connectProduct('BitTorrent', false, hash);
+        var container = new MediaContainerView();
+        $('body').append(container.render().el);
     } else {
-        var input = new InputView();
-        $('body > .container').append(input.render().el);
+        var container = new InputContainerView();
+        $('body').append(container.render().el);
     }
 
     $(window).bind('hashchange', _.debounce(_.bind(location.reload, location)));

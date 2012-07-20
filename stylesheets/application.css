@@ -1,15 +1,41 @@
 body > .container {
-    margin-top: 100px;
+    margin-top: 80px;
     margin-bottom: 80px;
     overflow-x: hidden;
 }
 
 body > .container .well {
     text-align: center;
+    margin-top: 30px;
 }
 
 body > .container .well span {
     padding: 0 20px;
+}
+
+.navbar-fixed-top {
+	position: absolute;
+}
+
+.navbar .brand {
+	padding-top: 10px;
+	padding-bottom: 5px;
+	color: #EBEBEB;
+}
+
+.navbar .brand:hover {
+	position: relative;
+	top: 0px;
+	left: 0px;
+	color: #E36B23;
+	text-shadow: none;	
+}
+
+.brand img {
+	width: 36px;
+	height: 36px;
+	margin-bottom: 8px;
+	margin-right: -4px;
 }
 
 .toolbox {
@@ -17,7 +43,7 @@ body > .container .well span {
 }
 
 .file_info {
-	color: #E36B23;
+	color: #ddd;
 }
 
 .vjs-big-play-button {
@@ -58,43 +84,54 @@ body > .container .well span {
 }
 
 .torrent_container {
-	height: 96px;
-	width: auto;
-	background-color: #222;
-	border-left: 1px solid #111;
-	border-top: 1px solid #111;
-	border-right: 1px solid #43515F;
-	overflow: hidden;
-	font-size: 11px;
-	font: 14px helvetica,arial,sans-serif;
-	color: #AAA;
-	z-index: 2001;
-}
-
-.torrent_container img {
 	height: 80px;
-	width: 80px;
-	float: left;
-	margin: 6px;
-	border: 2px solid #414141;
-}
-
-.torrent_container div {
-	height: 100%;
+	width: auto;
+	line-height: 60px;
+	z-index: 2001;
+	text-align: center;
 }
 
 .torrent_name {
-	font-size: 48px;
-	line-height: 48px;
-	margin: 24px;
+	font-size: 24px;
 }
 
 .audio, .video {
 	border-top: 1px solid #43515F;
 	border-bottom: 1px solid #14171A;
-	padding: 15px 0;
+	padding: 5px 0;
 }
 
-.audio.last, .video.last {
-	border-bottom: 0;
+.media div:first-child {
+	border-top: none;
+}
+
+.media div:last-child {
+	border-bottom: none;
+}
+
+.vim-css .vjs-controls > li {
+	height: 30px !important;
+}
+.vim-css .vjs-controls > li.vjs-progress-control, 
+.vim-css .vjs-controls > li.vjs-time-control, 
+.vim-css .vjs-controls > li.vjs-volume-control {
+	margin: 0 !important;
+	padding: 5px 0px 5px !important;	
+}
+
+.vim-css .vjs-controls > li.vjs-play-control {
+	left: 0px !important;
+}
+
+.vim-css .vjs-controls > li.vjs-volume-control {
+	right: 0px !important;
+}
+
+.vim-css .vjs-controls > li.vjs-time-control {
+	right: 50px !important;
+}
+
+.vim-css .vjs-controls {
+	padding-left: 75px!important;
+	padding-right: 125px!important;
 }

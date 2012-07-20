@@ -54,18 +54,12 @@
 </script>
     </head>
     <body>
-        <a href="https://github.com/bittorrenttorque/onehash.com"><img style="position: fixed; top: 0; right: 0; border: 0; z-index: 2000" src="images/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a>
+        <!--a href="https://github.com/bittorrenttorque/onehash.com"><img style="position: absolute; top: 0; right: 0; border: 0; z-index: 2000" src="images/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a-->
 
     <!-- templates -->
     <script type="text/template" id="torrent_template">
         <div class="torrent_container">
-            <img src="images/icon.png" />
-            <div>
-                <span class="torrent_name"><%= properties.name %></span>
-                <span class="torrent_progress"><%= properties.progress / 10.0 %>%</span>
-                <span class="torrent_peers"><%= properties.connected_peers %></span>
-                <span class="torrent_seeds"><%= properties.connected_seeds %></span>
-            </div>
+            <span class="torrent_name"><%= properties.name %></span>
         </div>
     </script>
     <script type="text/template" id="video_template">
@@ -112,25 +106,20 @@
         <div class="navbar-inner">
             <div class="container">
                 <a href="" class="brand">
+                    <img src="images/icon.png" />
                     <strong>oneHash</strong>
                     <span class="toolbox"></span>
                 </a>
             </div>
         </div>
     </div>
-    <div class="navbar navbar-fixed-bottom">
-        <div class="navbar-inner">
-            <div class="container">
-                <span>
-                    Powered By <a href="http://github.com/bittorrenttorque/btapp/">Btapp.js</a>
-                </span>
-                <span class="pull-right">
-                    Blog: <a href="http://pwmckenna.github.com/2012/06/29/making-of-onehash.html">The Making of OneHash</a>
-                </span>
-            </div>
+    <script type="text/template" id="input_container_template">
+    </script>
+    <script type="text/template" id="media_container_template">
+        <div class="media_header">
         </div>
-    </div>
-    <div class="container">
-    </div>
+        <div class="media">
+        </div>
+    </script>
     </body>
 </html>
