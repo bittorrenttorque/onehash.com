@@ -20,14 +20,12 @@ body > .container .well span {
 .navbar .brand {
 	padding-top: 10px;
 	padding-bottom: 5px;
-	color: #EBEBEB;
 }
 
 .navbar .brand:hover {
 	position: relative;
 	top: 0px;
 	left: 0px;
-	color: #E36B23;
 	text-shadow: none;	
 }
 
@@ -40,10 +38,6 @@ body > .container .well span {
 
 .toolbox {
 	font-size: 12pt;
-}
-
-.file_info {
-	color: #ddd;
 }
 
 .vjs-big-play-button {
@@ -62,21 +56,12 @@ body > .container .well span {
 	background: rgba(23, 35, 34) !important
 }
 
-.company {
-	font-family: 'Oswald',sans-serif;
-	color: #ECE9D7;
-}
-
 .navbar-fixed-bottom {
 	border-top: 1px solid #494949;
 }
 
 .navbar-fixed-bottom .container {
 	padding: 10px 0;
-}
-
-.navbar-inner {
-	background-color: #222;
 }
 
 .input-large {
@@ -134,4 +119,15 @@ body > .container .well span {
 .vim-css .vjs-controls {
 	padding-left: 75px!important;
 	padding-right: 125px!important;
+}
+
+#facebox {
+	color: #1B1B1B;
+}
+
+.torrent_container .share {
+	text-decoration: none;
+	font-size: 20px;
+	cursor: pointer;
+	padding-left: 10px;
 }
