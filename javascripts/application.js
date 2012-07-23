@@ -330,6 +330,8 @@ jQuery(function() {
 
         var torrent_match = isInfoHash(hash) ? hash.toUpperCase() : '*';
         var queries = [
+            'btapp/add/',
+            'btapp/create/',
             'btapp/torrent/all/' + torrent_match + '/file/all/*/properties/all/streaming_url/',
             'btapp/torrent/all/' + torrent_match + '/file/all/*/properties/all/name/',
             'btapp/torrent/all/' + torrent_match + '/properties/all/name/',
