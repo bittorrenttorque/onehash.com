@@ -330,7 +330,8 @@ jQuery(function() {
 
         btapp.connect({
             product: product,
-            plugin: plugin
+            plugin: plugin,
+            pairing_type: plugin ? 'iframe' : 'native'
         });
 
         var file_callback = function(properties) {
