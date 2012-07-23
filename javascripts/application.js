@@ -120,7 +120,7 @@ jQuery(function() {
         initialize: function() {
             this.template = _.template($('#torrent_template').html());
             this.model.on('add:properties', this.render, this);
-            this.model.get('properties').on('change:seeds_connected, change:peers_connected, change:file_count, change:hash', this.render, this);
+            this.model.get('properties').on('change', this.render, this);
         },
         destroy: function() {
             this.model.off('change', this.render, this);
@@ -320,7 +320,7 @@ jQuery(function() {
     });
 
     function connectProduct(product, plugin, hash) {
-        var link = isInfoHash(link) ? getMagnetLink(link) : hash;
+        var link = isInfoHash(hash) ? getMagnetLink(hash) : hash;
 
         console.log('connectProduct(' + product + ',' + hash + ')');
         var btapp = new Btapp();
@@ -328,10 +328,20 @@ jQuery(function() {
         var status = new StatusView({model: btapp, product: product});
         $('.toolbox').append(status.render().el);
 
+        var torrent_match = isInfoHash(hash) ? hash.toUpperCase() : '*';
+        var queries = [
+            'btapp/torrent/all/' + torrent_match + '/file/all/*/properties/all/streaming_url/',
+            'btapp/torrent/all/' + torrent_match + '/file/all/*/properties/all/name/',
+            'btapp/torrent/all/' + torrent_match + '/properties/all/name/',
+            'btapp/torrent/all/' + torrent_match + '/properties/all/download_url/',
+            'btapp/torrent/all/' + torrent_match + '/properties/all/uri/',
+        ];
+
         btapp.connect({
             product: product,
             plugin: plugin,
-            pairing_type: plugin ? 'iframe' : 'native'
+            pairing_type: plugin ? 'iframe' : 'native',
+            queries: queries
         });
 
         var file_callback = function(properties) {
@@ -345,7 +355,8 @@ jQuery(function() {
             }
         } 
 
-        btapp.live('torrent * properties', function(properties, torrent) {
+
+        btapp.live('torrent ' + torrent_match + ' properties', function(properties, torrent) {
             if(!properties || typeof properties !== 'object' || typeof properties.has === 'undefined') {
                 return;
             }
