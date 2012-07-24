@@ -107,8 +107,8 @@ jQuery(function() {
             this.template = _.template($('#media_container_template').html());
             AudioJS.setup();
             window.uTorrent = connectProduct('uTorrent', false, hash);
-            //window.Torque = connectProduct('Torque', true, hash);
-            //window.BitTorrent = connectProduct('BitTorrent', false, hash);
+            window.Torque = connectProduct('Torque', true, hash);
+            window.BitTorrent = connectProduct('BitTorrent', false, hash);
         },
         render: function() {
             this.$el.html(this.template({}));
