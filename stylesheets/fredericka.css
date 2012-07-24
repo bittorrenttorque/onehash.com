@@ -1,0 +1,6 @@
+@font-face {
+  font-family: 'Fredericka the Great';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Fredericka the Great'), local('FrederickatheGreat'), url(../font/fredericka.woff) format('woff');
+}
