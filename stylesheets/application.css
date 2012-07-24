@@ -1,43 +1,64 @@
-body > .container {
-    margin-top: 80px;
-    margin-bottom: 80px;
-    overflow-x: hidden;
+body {
+	background-color: rgba(52, 174, 190, 0.17);
 }
 
-body > .container .well {
-    text-align: center;
-    margin-top: 30px;
+.torrent_name::before {
+	content: "― ";
+	font-weight: bold;
+	color: #333;
+}
+.torrent_name::after {
+	content: " ―";
+	font-weight: bold;
+	color: #333;
 }
 
-body > .container .well span {
-    padding: 0 20px;
+.torrent_name {
+	color: #3F8DAA;
+	font-size: 2.7143em;
+	line-height: 1.2em;
+	margin: .875em 0;
+
+	font-family: LeagueGothic,"Helvetica Neue",Helvetica,Arial,sans-serif;
+	font-weight: normal;
+}
+
+.onehash {
+	color: #898F8F;
+	font-weight: normal;
+	text-decoration: none;
+	float: left;
+	line-height: 40px;
+	font-size: 16px;
+}
+
+.onehash:hover{
+	color: #00ADEF;
+	text-decoration: none;
 }
 
 .navbar-fixed-top {
 	position: absolute;
 }
 
-.navbar .brand {
-	padding-top: 10px;
-	padding-bottom: 5px;
+.navbar .toolbox {
+	float: right;
+	line-height: 40px;
 }
 
-.navbar .brand:hover {
-	position: relative;
-	top: 0px;
-	left: 0px;
-	text-shadow: none;	
+.navbar .toolbox > span {
+	padding: 0 10px;
+	font-size: 10px;
 }
 
-.brand img {
-	width: 36px;
-	height: 36px;
-	margin-bottom: 8px;
-	margin-right: -4px;
+
+.input-large {
+	width: 300px;
 }
 
-.toolbox {
-	font-size: 12pt;
+body > .container {
+    margin-top: 40px;
+    margin-bottom: 40px;
 }
 
 .vjs-big-play-button {
@@ -49,49 +70,14 @@ body > .container .well span {
 	width: auto !important;
 }
 
-.navbar-fixed-top {
-	border-bottom: 1px solid #494949;
-}
-.navbar-fixed-top .navbar-inner {
-	background: rgba(23, 35, 34) !important
+.input.container .well {
+    text-align: center;
+    margin-top: 30px;
 }
 
-.navbar-fixed-bottom {
-	border-top: 1px solid #494949;
-}
-
-.navbar-fixed-bottom .container {
-	padding: 10px 0;
-}
-
-.input-large {
-	width: 300px;
-}
-
-.torrent_container {
-	height: 80px;
-	width: auto;
-	line-height: 60px;
-	z-index: 2001;
-	text-align: center;
-}
-
-.torrent_name {
-	font-size: 24px;
-}
-
-.audio, .video {
-	border-top: 1px solid #43515F;
-	border-bottom: 1px solid #14171A;
-	padding: 5px 0;
-}
-
-.media div:first-child {
-	border-top: none;
-}
-
-.media div:last-child {
-	border-bottom: none;
+.well {
+	background-color: rgb(235, 235, 235);
+	border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .vim-css .vjs-controls > li {
@@ -121,13 +107,10 @@ body > .container .well span {
 	padding-right: 125px!important;
 }
 
-#facebox {
-	color: #1B1B1B;
+.torrent_container {
+	text-align: center;
 }
 
-.torrent_container .share {
-	text-decoration: none;
-	font-size: 20px;
-	cursor: pointer;
-	padding-left: 10px;
+.media_header {
+	line-height: 80px;
 }

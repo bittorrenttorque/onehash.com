@@ -107,8 +107,8 @@ jQuery(function() {
             this.template = _.template($('#media_container_template').html());
             AudioJS.setup();
             window.uTorrent = connectProduct('uTorrent', false, hash);
-            window.Torque = connectProduct('Torque', true, hash);
-            window.BitTorrent = connectProduct('BitTorrent', false, hash);
+            //window.Torque = connectProduct('Torque', true, hash);
+            //window.BitTorrent = connectProduct('BitTorrent', false, hash);
         },
         render: function() {
             this.$el.html(this.template({}));
@@ -121,6 +121,7 @@ jQuery(function() {
             this.template = _.template($('#torrent_template').html());
             this.model.on('add:properties', this.render, this);
             this.model.get('properties').on('change', this.render, this);
+            this.model.on('destroy', this.destroy, this);
         },
         destroy: function() {
             this.model.off('change', this.render, this);
@@ -128,14 +129,14 @@ jQuery(function() {
         },
         render: function() {
             this.$el.html(this.template({
-                properties: this.model.get('properties').toJSON()
+                name: this.model.get('properties').get('name')
             }));
             return this;
         }
     });
 
     var AudioFileView = Backbone.View.extend({
-        className: 'audio',
+        className: 'audio well',
         initialize: function() {
             this.template = _.template($('#audio_template').html());
             this.model.on('destroy', this.remove, this);
@@ -155,7 +156,7 @@ jQuery(function() {
     });
 
     var VideoFileView = Backbone.View.extend({
-        className: 'video',
+        className: 'video well',
         initialize: function() {
             this.template = _.template($('#video_template').html());
             this.model.on('destroy', this.destroy, this);
@@ -299,22 +300,28 @@ jQuery(function() {
 
     var StatusView = Backbone.View.extend({
         tagName: 'span',
+        className: 'status',
         initialize: function() {
-            this.status = 'uninitialized';
-            this.model.on('all', this.update, this);
+            this.template = _.template($('#status_template').html());
+            this.model.get('btapp').on('all', this.update, this);
+            this.model.on('change', this.render, this);
         },
         destroy: function() {
-            this.model.off('all', this.update, this);
+            this.$el.off('click', this.click, this);
+            this.model.get('btapp').off('all', this.update, this);
+            this.model.off('change', this.render, this);
             this.remove();
         },
         update: function(e) {
             if(e in STATUS_MESSAGES) {
-                this.status = STATUS_MESSAGES[e];
-                this.render();
+                this.model.set('status', STATUS_MESSAGES[e]);
             }
         },
         render: function() {
-            this.$el.text(',  ' + this.options.product + ' ( ' + this.status + ' ) ');
+            this.$el.html(this.template({
+                product: this.model.get('product'),
+                status: this.model.get('status')
+            }));
             return this;
         }
     });
@@ -325,11 +332,19 @@ jQuery(function() {
         console.log('connectProduct(' + product + ',' + hash + ')');
         var btapp = new Btapp();
 
-        var status = new StatusView({model: btapp, product: product});
-        $('.toolbox').append(status.render().el);
+        var status = new Backbone.Model({
+            btapp: btapp,
+            product: product,
+            status: 'uninitialized'
+        });
+        var statusview = new StatusView({model: status});
+        $('.toolbox').append(statusview.render().el);
+
+
 
         var torrent_match = isInfoHash(hash) ? hash.toUpperCase() : '*';
         var queries = [
+            'btapp/showview/',
             'btapp/add/',
             'btapp/create/',
             'btapp/torrent/all/' + torrent_match + '/file/all/*/properties/all/streaming_url/',
