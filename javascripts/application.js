@@ -389,7 +389,6 @@ jQuery(function() {
             pairing_type: 'native'    
         });
 
-
         //add the torrent
         var btapp = new Btapp;
         btapp.connect({
@@ -401,6 +400,7 @@ jQuery(function() {
         var add_callback = function(add) {
             btapp.off('add:add', add_callback);
             add.torrent(link);
+            btapp.disconnect();
         }
         btapp.on('add:add', add_callback);
 
