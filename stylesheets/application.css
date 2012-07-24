@@ -17,10 +17,15 @@ body {
 	color: #3F8DAA;
 	font-size: 2.7143em;
 	line-height: 1.2em;
-	margin: .875em 0;
+	margin: .875em 0 0 0;
 
 	font-family: LeagueGothic,"Helvetica Neue",Helvetica,Arial,sans-serif;
 	font-weight: normal;
+}
+
+.addthis_toolbox {
+	width: 250px;
+	margin: 20px auto;
 }
 
 .onehash {
