@@ -101,19 +101,69 @@ jQuery(function() {
         return _.last(filename.split('/'));
     }
 
-    var MediaContainerView = Backbone.View.extend({
-        className: 'media container',
+    var AppView = Backbone.View.extend({
+        className: 'container',
         initialize: function() {
             this.template = _.template($('#media_container_template').html());
-            AudioJS.setup();
-            window.uTorrent = connectProduct('uTorrent', false, hash);
-            //window.Torque = connectProduct('Torque', true, hash);
-            //window.BitTorrent = connectProduct('BitTorrent', false, hash);
+            var btapp = new Btapp();
+
+            var torrent_match = isInfoHash(hash) ? hash.toUpperCase() : '*';
+            var queries = [
+                'btapp/showview/',
+                'btapp/torrent/all/' + torrent_match + '/file/all/*/properties/all/streaming_url/',
+                'btapp/torrent/all/' + torrent_match + '/file/all/*/properties/all/name/',
+                'btapp/torrent/all/' + torrent_match + '/properties/all/name/',
+                'btapp/torrent/all/' + torrent_match + '/properties/all/download_url/',
+                'btapp/torrent/all/' + torrent_match + '/properties/all/uri/',
+            ];
+
+            btapp.connect({
+                product: this.model.get('product'),
+                plugin: this.model.get('plugin'),
+                pairing_type: this.model.get('pairing_type'),
+                queries: queries
+            });
+
+            btapp.live('torrent ' + torrent_match + ' properties', this.torrent, this);
+
+
+            var status = new Backbone.Model({
+                btapp: btapp,
+                product: this.model.get('product'),
+                status: 'uninitialized'
+            });
+            var statusview = new StatusView({model: status});
+            $('.toolbox').append(statusview.render().el);
         },
         render: function() {
             this.$el.html(this.template({}));
             return this;
-        }
+        },
+        torrent: function(properties, torrent) {
+            if(!properties || typeof properties !== 'object' || typeof properties.has === 'undefined') {
+                return;
+            }
+            var hash = this.model.get('hash');
+            if( (isInfoHash(hash) && torrent.id === hash) ||
+                properties.get('download_url') === hash ||
+                properties.get('uri') === hash
+            ) {
+                var view = new TorrentView({model: torrent});
+                this.$el.find('.media_header').append(view.render().el);
+
+                torrent.live('file * properties', this.file, this);
+            }
+        },
+        file: function(properties) {
+            var name = properties.get('name');
+            if(_.include(SUPPORTED_VIDEO_EXTENSIONS, name.substr(name.length - 3))) {
+                var view = new VideoFileView({model: properties});
+                this.$el.find('.media').append(view.render().el);
+            } else if(_.include(SUPPORTED_AUDIO_EXTENSIONS, name.substr(name.length - 3))) {
+                var view = new AudioFileView({model: properties});
+                this.$el.find('.media').append(view.render().el);
+            }
+        }        
     });
 
     var TorrentView = Backbone.View.extend({
@@ -326,83 +376,36 @@ jQuery(function() {
         }
     });
 
-    function connectProduct(product, plugin, hash) {
+
+    AudioJS.setup();
+    var hash = window.location.hash.substring(1);
+    if(hash) {
         var link = isInfoHash(hash) ? getMagnetLink(hash) : hash;
-
-        console.log('connectProduct(' + product + ',' + hash + ')');
-        var btapp = new Btapp();
-
-        var status = new Backbone.Model({
-            btapp: btapp,
-            product: product,
-            status: 'uninitialized'
+        var model = new Backbone.Model({
+            hash: hash,
+            link: link,
+            product: 'uTorrent',
+            plugin: false,
+            pairing_type: 'native'    
         });
-        var statusview = new StatusView({model: status});
-        $('.toolbox').append(statusview.render().el);
 
 
-
-        var torrent_match = isInfoHash(hash) ? hash.toUpperCase() : '*';
-        var queries = [
-            'btapp/showview/',
-            'btapp/add/',
-            'btapp/create/',
-            'btapp/torrent/all/' + torrent_match + '/file/all/*/properties/all/streaming_url/',
-            'btapp/torrent/all/' + torrent_match + '/file/all/*/properties/all/name/',
-            'btapp/torrent/all/' + torrent_match + '/properties/all/name/',
-            'btapp/torrent/all/' + torrent_match + '/properties/all/download_url/',
-            'btapp/torrent/all/' + torrent_match + '/properties/all/uri/',
-        ];
-
+        //add the torrent
+        var btapp = new Btapp;
         btapp.connect({
-            product: product,
-            plugin: plugin,
-            pairing_type: plugin ? 'iframe' : 'native',
-            queries: queries
+            product: model.get('product'),
+            plugin: model.get('plugin'),
+            pairing_type: model.get('pairing_type'),
+            queries: ['btapp/add/', 'btapp/create/']
         });
-
-        var file_callback = function(properties) {
-            var name = properties.get('name');
-            if(_.include(SUPPORTED_VIDEO_EXTENSIONS, name.substr(name.length - 3))) {
-                var view = new VideoFileView({model: properties});
-                $('body > .media.container .media').append(view.render().el);
-            } else if(_.include(SUPPORTED_AUDIO_EXTENSIONS, name.substr(name.length - 3))) {
-                var view = new AudioFileView({model: properties});
-                $('body > .media.container .media').append(view.render().el);
-            }
-        } 
-
-
-        btapp.live('torrent ' + torrent_match + ' properties', function(properties, torrent) {
-            if(!properties || typeof properties !== 'object' || typeof properties.has === 'undefined') {
-                return;
-            }
-            if( (isInfoHash(link) && torrent.id === hash) ||
-                properties.get('download_url') === link ||
-                properties.get('uri') === link
-            ) {
-                var view = new TorrentView({model: torrent});
-                $('body > .media.container .media_header').append(view.render().el);
-
-                torrent.live('file * properties', function(file_properties) {
-                    file_callback(file_properties);
-                });
-            }
-        });
-
-
         var add_callback = function(add) {
             btapp.off('add:add', add_callback);
             add.torrent(link);
         }
         btapp.on('add:add', add_callback);
 
-        return btapp;
-    }
-
-    var hash = window.location.hash.substring(1);
-    if(hash) {
-        var container = new MediaContainerView();
+        //display everything
+        var container = new AppView({model: model});
         $('body').append(container.render().el);
     } else {
         var container = new InputContainerView();

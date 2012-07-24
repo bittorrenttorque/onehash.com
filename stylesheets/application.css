@@ -5,12 +5,12 @@ body {
 .torrent_name::before {
 	content: "― ";
 	font-weight: bold;
-	color: #333;
+	color: #3F8DAA;
 }
 .torrent_name::after {
 	content: " ―";
 	font-weight: bold;
-	color: #333;
+	color: #3F8DAA;
 }
 
 .torrent_name {
