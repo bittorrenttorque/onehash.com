@@ -8,6 +8,7 @@
         <script type="text/javascript" src="javascripts/lib/json2.js"></script>
         <script type="text/javascript" src="javascripts/lib/underscore.js"></script>
         <script type="text/javascript" src="javascripts/lib/backbone.js"></script>
+        <script type="text/javascript" src="javascripts/lib/humane.js"></script>
 
         <!-- pwmckenna/backbrace submodule -->
         <script type="text/javascript" src="javascripts/backbrace/backbrace.js"></script>
@@ -60,6 +61,12 @@
     <!-- templates -->
     <script type="text/template", id="status_template">
         <span><%= product %> ( <%= status %> ) </span>
+    </script>
+    <script type="text/template" id="torrent_download_template">
+        <span class="download_speed"><%= download_speed %></span>
+        <span class="prog"><%= progress %></span>
+        <span class="upload_speed"><%= upload_speed %></span>
+        <span class="eta"><%= eta %></span>
     </script>
     <script type="text/template" id="torrent_template">
         <div class="torrent_container">
@@ -128,9 +135,23 @@
     <script type="text/template" id="input_container_template">
     </script>
     <script type="text/template" id="media_container_template">
-        <div class="media_header">
+        <div class="media container_background expanded">
+            <a class="icon"></a>
+            <div class="shadow"></div>
+            <div class="media container">
+                <div class="media_header"></div>
+                <div class="media"></div>
+            </div>
         </div>
-        <div class="media">
+        <div class="stats container_background collapsed">
+            <a href="" class="icon"></a>
+            <div class="shadow"></div>
+            <div class="stats container"></div>
+        </div>
+        <div class="code container_background collapsed">
+            <a href="" class="icon"></a>
+            <div class="shadow"></div>
+            <div class="code container"></div>
         </div>
     </script>
     </body>
