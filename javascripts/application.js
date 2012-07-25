@@ -426,13 +426,22 @@ jQuery(function() {
     var hash = window.location.hash.substring(1);
     if(hash) {
         var link = isInfoHash(hash) ? getMagnetLink(hash) : hash;
-        var model = new Backbone.Model({
-            hash: hash,
-            link: link,
-            product: 'uTorrent',
-            plugin: false,
-            pairing_type: 'native'    
-        });
+        var model;
+        if(location.host.indexOf('github') !== -1) {
+            model = new Backbone.Model({
+                hash: hash,
+                link: link,
+                product: 'Torque'
+            });
+        } else {
+            model = new Backbone.Model({
+                hash: hash,
+                link: link,
+                product: 'uTorrent',
+                plugin: false,
+                pairing_type: 'native'    
+            });
+        }
 
         //add the torrent
         var btapp = new Btapp;
