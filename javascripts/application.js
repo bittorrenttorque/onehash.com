@@ -163,7 +163,6 @@ jQuery(function() {
                 properties.get('download_url') === hash ||
                 properties.get('uri') === hash
             ) {
-                debugger;
                 this.$el.find('.media.container_background').removeClass('collapsed').addClass('expanded');
 
                 var view = new TorrentNameView({model: torrent});
@@ -471,14 +470,6 @@ jQuery(function() {
         $('body').append(container.render().el);
     }
 
-    $('a.icon').click(function(e) {
-        e.preventDefault();
-        var _this = $(this);
-        _this.parent().toggleClass('expanded');
-        _this.parent().toggleClass('collapsed');
-        _this.hide();
-    });
-
     function resize() {
         var w = $(window).height();
         var s = $('.stats.container_background').height();
@@ -492,6 +483,14 @@ jQuery(function() {
     }
     resize();
     $(window).resize(resize);
+    $('a.icon').click(function(e) {
+        e.preventDefault();
+        var _this = $(this);
+        _this.parent().toggleClass('expanded');
+        _this.parent().toggleClass('collapsed');
+        _this.hide();
+        resize();
+    });
 
     $(window).bind('hashchange', _.debounce(_.bind(location.reload, location)));
 });
