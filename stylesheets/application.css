@@ -9,16 +9,16 @@ html, body {
 	height: auto;
 	overflow-x: hidden;
 	min-height: 100%;
+	background-color: #F7FDFF;
 }
 
 .main {
-	background-color: #333;
 	margin-top: 41px;
 	min-height: 100%;
 }
 
 .media.container_background {
-	background-color: #E2F4FC;
+	background-color: #F7FDFF;
 }
 
 .media.container_background, .input.container {
@@ -320,4 +320,9 @@ html, body {
 	text-align: center;
 	top: 0px;
 	color: white;
+}
+
+#content a {
+	font-weight: bold;
+	color: black;
 }
