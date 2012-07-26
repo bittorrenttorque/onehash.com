@@ -48,6 +48,7 @@ jQuery(function() {
     };
 
     var TRACKERS = [
+        'udp://tracker.openbittorrent.com:80/announce',
         'udp://tracker.publicbt.com:80/announce',
         'http://bt.rghost.net/announce',
         'http://exodus.desync.com/announce',
@@ -162,6 +163,9 @@ jQuery(function() {
                 properties.get('download_url') === hash ||
                 properties.get('uri') === hash
             ) {
+                debugger;
+                this.$el.find('.media.container_background').removeClass('collapsed').addClass('expanded');
+
                 var view = new TorrentNameView({model: torrent});
                 this.$el.find('.media.container > .media_header').append(view.render().el);
 
@@ -467,13 +471,27 @@ jQuery(function() {
         $('body').append(container.render().el);
     }
 
-    $('.icon').click(function(e) {
+    $('a.icon').click(function(e) {
         e.preventDefault();
         var _this = $(this);
         _this.parent().toggleClass('expanded');
         _this.parent().toggleClass('collapsed');
         _this.hide();
     });
+
+    function resize() {
+        var w = $(window).height();
+        var s = $('.stats.container_background').height();
+        var c = $('.code.container_background').height();
+        var n = $('.navbar').height();
+
+        //80 is for the padding on .media.container_background
+        var height = w - (s + c + n + 80);
+        $('.media.container_background').css('min-height', height);
+
+    }
+    resize();
+    $(window).resize(resize);
 
     $(window).bind('hashchange', _.debounce(_.bind(location.reload, location)));
 });

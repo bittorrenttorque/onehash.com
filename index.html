@@ -74,9 +74,8 @@
         <div class="files">
             <% for(var i = 0; i < files.length; i++) { %>
                 <div class="file progress">
-                  <div class="bar" style="width: <%= files[i].progress %>%;">
-                       <%= files[i].downloaded %> / <%= files[i].size %>
-                   </div>
+                    <div class="bar" style="width: <%= files[i].progress %>%;"></div>
+                    <div class="text"><%= files[i].downloaded %> / <%= files[i].size %></div>
                 </div>
             <% } %>
         </div>
@@ -141,7 +140,7 @@
     <div class="navbar navbar-fixed-top">
         <div class="navbar-inner">
             <div class="container">
-                <a href="" class="onehash"><i class="icon-pushpin"></i> oneHash</a>
+                <a href="" class="onehash">oneHash</a>
                 <span class="toolbox"></span>
             </div>
         </div>
@@ -149,7 +148,8 @@
     <script type="text/template" id="input_container_template">
     </script>
     <script type="text/template" id="media_container_template">
-        <div class="media container_background expanded">
+        <div class="media container_background collapsed">
+            <span href="" class="icon"></span>
             <div class="shadow"></div>
             <div class="media container">
                 <div class="media_header"></div>

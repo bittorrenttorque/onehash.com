@@ -6,12 +6,15 @@
 }
 
 html, body {
-	height: 100%;
+	height: auto;
+	overflow-x: hidden;
+	min-height: 100%;
 }
 
 .main {
 	background-color: #333;
-	height: 100%;
+	margin-top: 41px;
+	min-height: 100%;
 }
 
 .media.container_background {
@@ -42,6 +45,17 @@ html, body {
 	background-position: center center;
 	border-radius: 75px;
 	z-index: 2;
+}
+
+.media.container_background .icon {
+	background-image: url(../images/loading.gif);
+	background-size: 64px 64px;
+	background-color: white;
+	border: 3px solid rgba(150, 150, 150, 0.2);
+}
+
+.media.container_background.expanded .icon {
+	display: none;
 }
 
 .stats.container_background .icon {
@@ -111,8 +125,8 @@ html, body {
 .media .shadow {
 	background-image:-moz-linear-gradient(top, rgba(0,0,0,0.25), rgba(0,0,0,0));
 	background-image:-ms-linear-gradient(top, rgba(0,0,0,0.25), rgba(0,0,0,0));
-	background-image:-webkit-gradient(linear, 0 0, 0 100%, from(rgba(0,0,0,0.25)), to(rgba(0,0,0,0)));
-	background-image:-webkit-linear-gradient(bottom, rgba(0,0,0,0.25), rgba(0,0,0,0));
+	background-image:-webkit-gradient(linear, 0 0, 0 100%, from(rgba(0,0,0,0.25)), to(rgba(226, 244, 252, 0)));
+	background-image:-webkit-linear-gradient(bottom, rgba(0,0,0,0.25), rgba(226, 244, 252, 0));
 	background-image:-o-linear-gradient(top, rgba(0,0,0,0.25), rgba(0,0,0,0));
 	background-image:linear-gradient(top,rgba(0,0,0,0.25), rgba(0,0,0,0));
 	background-repeat:repeat-x;
@@ -153,7 +167,6 @@ html, body {
 	color: #3F8DAA;
 	font-size: 2.7143em;
 	line-height: 1.2em;
-	margin: .875em 0 0 0;
 
 	font-family: 'Fredericka the Great', cursive;
 	font-weight: normal;
@@ -176,11 +189,6 @@ html, body {
 .onehash:hover{
 	color: #3F8DAA;
 	text-decoration: none;
-}
-
-.icon-pushpin {
-	font-size: 24px;
-	padding-right: 10px;
 }
 
 .navbar-fixed-top {
@@ -288,6 +296,7 @@ html, body {
 
 .files {
 	padding-top: 20px;
+	position: relative;
 }
 
 .file.progress {
@@ -296,9 +305,19 @@ html, body {
 	height: 16px;
 	background-image: none;
 	background-color: #999;
+	position: relative;
 }
 
 .file.progress .bar {
-	background-color: #333;
+	background-color: #555;
 	background-image: none;
+}
+
+.file.progress .text {
+	position: absolute;
+	width: 100%;
+	height: 18px;
+	text-align: center;
+	top: 0px;
+	color: white;
 }
