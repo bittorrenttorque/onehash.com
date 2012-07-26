@@ -52,7 +52,7 @@ html, body {
 }
 
 .stats.container_background .icon:hover {
-	background-color: rgba(226, 244, 252, 0.8);
+	background-color: rgba(226, 244, 252, 1.0);
 	border-color: rgba(50, 50, 50, 0.5);
 }
 
