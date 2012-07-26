@@ -52,8 +52,13 @@ html, body {
 }
 
 .stats.container_background .icon:hover {
-	background-color: #E2F4FC;
+	background-color: rgba(226, 244, 252, 0.8);
 	border-color: rgba(50, 50, 50, 0.5);
+}
+
+.stats.container_background.expanded .icon:hover {
+	background-color: rgba(226, 244, 252, 0.2);
+	border-color: rgba(50, 50, 50, 0.2);
 }
 
 .code.container_background .icon {
@@ -63,15 +68,26 @@ html, body {
 	background-size: 80px 80px;
 }
 
+.code.container_background.expanded .icon:hover {
+	border: 3px solid rgba(50, 50, 50, 0.2);
+	background-color: rgba(150, 150, 150, 0.2);
+}
+
+
 .code.container_background .icon:hover {
 	background-color: #ddd;
 }
 
 .container_background.expanded .icon {
-	display: none;
+	background-image: none;
+	background-color: rgba(150, 150, 150, 0.1);
 }
 
 .container_background.collapsed .container {
+	display: none;
+}
+
+.container_background.collapsed .fork {
 	display: none;
 }
 
@@ -237,4 +253,43 @@ html, body {
 }
 .file_info {
 	font-weight: bold;
+}
+
+
+
+.stats.container > .wrapper {
+	background-color: #EFEFEF;
+	margin: 50px 0;
+	border: 1px solid #CCC;
+	border-radius: 4px;
+	padding: 20px;
+}
+
+.stats.container > .wrapper > div {
+	width: 100%;
+	text-align: center;
+}
+
+.torrent.prog {
+	height: 150px;
+	font-weight: normal;
+	line-height: 150px;
+	font-size: 150px;
+}
+
+.files {
+	padding-top: 20px;
+}
+
+.file.progress {
+	margin: 5px 0;
+	line-height: 16px;
+	height: 16px;
+	background-image: none;
+	background-color: #999;
+}
+
+.file.progress .bar {
+	background-color: #333;
+	background-image: none;
 }

@@ -124,9 +124,10 @@ jQuery(function() {
             var torrent_match = isInfoHash(hash) ? hash.toUpperCase() : '*';
             var queries = [
                 'btapp/showview/',
+                'btapp/torrent/all/' + torrent_match + '/file/all/*/properties/all/size/',
+                'btapp/torrent/all/' + torrent_match + '/file/all/*/properties/all/downloaded/',
                 'btapp/torrent/all/' + torrent_match + '/file/all/*/properties/all/streaming_url/',
                 'btapp/torrent/all/' + torrent_match + '/file/all/*/properties/all/name/',
-                'btapp/torrent/all/' + torrent_match + '/properties/all/name/',
                 'btapp/torrent/all/' + torrent_match + '/properties/all/'
             ];
 
@@ -167,7 +168,7 @@ jQuery(function() {
                 torrent.live('file * properties', this.file, this);
 
                 var stats = new TorrentDownloadView({model: torrent});
-                this.$el.find('.stats.container').append(stats.render().el);
+                this.$el.find('.stats.container .wrapper').append(stats.render().el);
             }
         },
         file: function(properties) {
@@ -211,20 +212,31 @@ jQuery(function() {
             this.remove();
         },
         render: function() {
-            var eta, progress;
+            var eta, progress, files;
             progress = this.model.get('properties').get('progress') / 10.0;
             if(progress == 100) {
-                date = new Date(this.model.get('properties').get('added_on') * 1000);
+                var date = new Date(this.model.get('properties').get('added_on') * 1000);
+                eta = 'Added ' + humaneDate(date);
             } else {
-                var eta = this.model.get('properties').get('eta');
-                date = new Date(eta * 1000 + (new Date()).getTime());
+                var date = new Date(this.model.get('properties').get('eta') * 1000 + (new Date()).getTime());
+                eta = 'Complete In ' + humaneDate(date)
             }
+
+            var files = this.model.get('file').map(function(file) { 
+                return {
+                    progress: 100 * file.get('properties').get('downloaded') / file.get('properties').get('size'),
+                    downloaded: readableFileSize(file.get('properties').get('downloaded')),
+                    size: readableFileSize(file.get('properties').get('size'))
+                };
+            });
 
             this.$el.html(this.template({
                 progress: progress + '%',
                 upload_speed: readableTransferRate(this.model.get('properties').get('upload_speed')),
                 download_speed: readableTransferRate(this.model.get('properties').get('download_speed')),
-                eta: humaneDate(date)
+                eta: eta,
+                files: files,
+                ratio: this.model.get('properties').get('ratio') / 1000.0
             }));
             return this;
         }
@@ -469,20 +481,8 @@ jQuery(function() {
     $('.icon').click(function(e) {
         e.preventDefault();
         var _this = $(this);
-        _this.fadeOut(function() {
-            _this.parent().addClass('expanded');
-            _this.parent().removeClass('collapsed');
-        })
-    });
-
-    $('.container_background.collapsed').click(function(e) {
-        debugger;
-        e.preventDefault();
-        if($(this).hasClass('expanded')) {
-            $(this).addClass('collapsed');
-            $(this).removeClass('expanded');
-            $(this).find('.icon').fadeIn();
-        }
+        _this.parent().toggleClass('expanded');
+        _this.parent().toggleClass('collapsed');
     });
 
     $(window).bind('hashchange', _.debounce(_.bind(location.reload, location)));

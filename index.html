@@ -56,17 +56,31 @@
 </script>
     </head>
     <body>
-        <!--a href="https://github.com/bittorrenttorque/onehash.com"><img style="position: absolute; top: 0; right: 0; border: 0; z-index: 2000" src="images/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a-->
 
     <!-- templates -->
     <script type="text/template", id="status_template">
         <span><%= product %> ( <%= status %> ) </span>
     </script>
     <script type="text/template" id="torrent_download_template">
-        <span class="download_speed"><%= download_speed %></span>
-        <span class="prog"><%= progress %></span>
-        <span class="upload_speed"><%= upload_speed %></span>
-        <span class="eta"><%= eta %></span>
+        <h3>.torrent info</h3>
+        <div class="torrent prog"><%= progress %></div>
+        <div>
+            <i class="icon-arrow-down"></i> <span class="download_speed"><%= download_speed %></span>
+            <i class="icon-arrow-up"></i> <span class="upload_speed"><%= upload_speed %></span>
+        </div>
+
+        <div class="eta"><%= eta %></div>
+        <div class="ratio">UL/DL Ratio: <%= ratio %></div>
+        <div class="files">
+            <% for(var i = 0; i < files.length; i++) { %>
+                <div class="file progress">
+                  <div class="bar" style="width: <%= files[i].progress %>%;">
+                       <%= files[i].downloaded %> / <%= files[i].size %>
+                   </div>
+                </div>
+            <% } %>
+        </div>
+
     </script>
     <script type="text/template" id="torrent_template">
         <div class="torrent_container">
@@ -136,7 +150,6 @@
     </script>
     <script type="text/template" id="media_container_template">
         <div class="media container_background expanded">
-            <a class="icon"></a>
             <div class="shadow"></div>
             <div class="media container">
                 <div class="media_header"></div>
@@ -146,12 +159,17 @@
         <div class="stats container_background collapsed">
             <a href="" class="icon"></a>
             <div class="shadow"></div>
-            <div class="stats container"></div>
+            <div class="stats container">
+                <div class="wrapper">
+                </div>
+            </div>
         </div>
         <div class="code container_background collapsed">
+            <a class="fork" href="https://github.com/you"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
             <a href="" class="icon"></a>
             <div class="shadow"></div>
-            <div class="code container"></div>
+            <div class="code container">
+            </div>
         </div>
     </script>
     </body>
