@@ -73,9 +73,18 @@ html, body {
 	background-color: rgba(150, 150, 150, 0.2);
 }
 
+.code.container_background.expanded .icon {
+	border: 3px solid rgba(225, 225, 225, 0.1);
+	background-color: rgba(150, 150, 150, 0.1);
+}
 
 .code.container_background .icon:hover {
 	background-color: #ddd;
+}
+
+.code {
+	font-weight: bold;
+	 font-family: monospace;
 }
 
 .container_background.expanded .icon {
@@ -257,7 +266,7 @@ html, body {
 
 
 
-.stats.container > .wrapper {
+.container > .wrapper {
 	background-color: #EFEFEF;
 	margin: 50px 0;
 	border: 1px solid #CCC;
