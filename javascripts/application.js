@@ -484,7 +484,6 @@ jQuery(function() {
         _this.parent().toggleClass('expanded');
         _this.parent().toggleClass('collapsed');
         _this.hide();
-        _this.fadeIn();
     });
 
     $(window).bind('hashchange', _.debounce(_.bind(location.reload, location)));
