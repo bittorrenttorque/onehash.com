@@ -239,7 +239,8 @@ jQuery(function() {
                 download_speed: readableTransferRate(this.model.get('properties').get('download_speed')),
                 eta: eta,
                 files: files,
-                ratio: this.model.get('properties').get('ratio') / 1000.0
+                ratio: this.model.get('properties').get('ratio') / 1000.0,
+                hash: this.model.id
             }));
             return this;
         }
