@@ -241,6 +241,8 @@ jQuery(function() {
                             eta = 'Complete In ' + humaneDate(date)
                         }
                     }
+
+                    progress = progress + '%';
                 }
 
                 if(properties.has('download_speed')) {
@@ -278,12 +280,13 @@ jQuery(function() {
             }
 
             this.$el.html(this.template({
-                progress: progress + '%',
+                progress: progress,
                 upload_speed: upload_speed,
                 download_speed: download_speed,
                 eta: eta,
                 files: files,
-                ratio: ratio
+                ratio: ratio,
+                hash: this.model.id
             }));
 
             this.$el.find('.icon-folder-open').click(_.bind(function(e) {
