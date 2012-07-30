@@ -172,6 +172,16 @@ html, body {
 	font-weight: normal;
 }
 
+.icon-folder-open, .icon-remove {
+	color: black;
+	font-size: 16px;
+	z-index: 99s;
+}
+.icon-folder-open:hover, .icon-remove:hover {
+	text-decoration: none;
+	color: #777;
+}
+
 .addthis_toolbox {
 	width: 250px;
 	margin: 20px auto;
