@@ -24,7 +24,7 @@ jQuery(function() {
     };
 
     var SUPPORTED_VIDEO_EXTENSIONS = [
-         'mp4', 'avi', 'mkv'
+         'mp4', 'avi', 'mkv', 'mov'
     ];
 
     var SUPPORTED_AUDIO_EXTENSIONS = [
@@ -124,14 +124,14 @@ jQuery(function() {
 
             var torrent_match = isInfoHash(hash) ? hash.toUpperCase() : '*';
             var queries = [
-                'btapp/showview/',
-                'btapp/torrent/all/' + torrent_match + '/file/all/*/properties/all/size/',
-                'btapp/torrent/all/' + torrent_match + '/file/all/*/properties/all/downloaded/',
-                'btapp/torrent/all/' + torrent_match + '/file/all/*/properties/all/streaming_url/',
-                'btapp/torrent/all/' + torrent_match + '/file/all/*/properties/all/name/',
-                'btapp/torrent/all/' + torrent_match + '/properties/all/',
-                'btapp/torrent/all/' + torrent_match + '/remove/',
-                'btapp/torrent/all/' + torrent_match + '/open_containing/'
+                ['btapp','showview'],
+                ['btapp','torrent','all',torrent_match,'file','all','*','properties','all','size'],
+                ['btapp','torrent','all',torrent_match,'file','all','*','properties','all','downloaded'],
+                ['btapp','torrent','all',torrent_match,'file','all','*','properties','all','streaming_url'],
+                ['btapp','torrent','all',torrent_match,'file','all','*','properties','all','name'],
+                ['btapp','torrent','all',torrent_match,'properties','all'],
+                ['btapp','torrent','all',torrent_match,'remove'],
+                ['btapp','torrent','all',torrent_match,'open_containing']
             ];
 
             btapp.connect({
@@ -161,7 +161,7 @@ jQuery(function() {
                 return;
             }
             var hash = this.model.get('hash');
-            if( (isInfoHash(hash) && torrent.id === hash) ||
+            if( (isInfoHash(hash) && torrent.id === hash.toUpperCase()) ||
                 properties.get('download_url') === hash ||
                 properties.get('uri') === hash
             ) {
@@ -402,6 +402,7 @@ jQuery(function() {
 
     var InputView = Backbone.View.extend({
         initialize: function() {
+            _.bindAll(this, 'create');
             this.template = _.template($('#input_template').html());
         },
         render: function() {
@@ -409,6 +410,7 @@ jQuery(function() {
             this.$el.find('form').submit(_.bind(function(event) {
                  window.location = '#' + this.$el.find('input').val();
             }, this));
+            this.$el.find('#create').click(this.create);
             this.$el.find('#create').on('click', this.create, this);
             return this;
         },
@@ -421,12 +423,19 @@ jQuery(function() {
 
             var btapp = new Btapp;
             btapp.connect({
-                queries: ['btapp/create/', 'btapp/browseforfiles/'],
+                queries: [['btapp', 'create'], ['btapp', 'browseforfiles']],
                 product: product,
                 poll_frequency: 500
             });
 
-            var status = new StatusView({model: btapp, product: product});
+
+            var status = new Backbone.Model({
+                btapp: btapp,
+                product: btapp.get('product'),
+                status: 'uninitialized'
+            });
+
+            var status = new StatusView({model: status});
             $('.toolbox').append(status.render().el);
 
             var browse_ready = function() {
@@ -449,7 +458,6 @@ jQuery(function() {
                         btapp.trigger('input:torrent_created');
                         setTimeout(_.bind(btapp.trigger, btapp, 'input:redirecting'), 1000);
                         setTimeout(function() {
-                            btapp.disconnect();
                             status.destroy();
                             window.location = '#' + data;
                         }, 3000);
@@ -462,6 +470,7 @@ jQuery(function() {
                 });
             };
             btapp.on('add:bt:browseforfiles', browse_ready);
+            btapp.on('all', _.bind(console.log, console));
         }
     });
 
@@ -510,7 +519,7 @@ jQuery(function() {
             product: model.get('product'),
             plugin: model.get('plugin'),
             pairing_type: model.get('pairing_type'),
-            queries: ['btapp/add/', 'btapp/create/']
+            queries: [['btapp','add'],['btapp','create']]
         });
         var add_callback = function(add) {
             btapp.off('add:add', add_callback);
