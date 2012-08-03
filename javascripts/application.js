@@ -129,7 +129,9 @@ jQuery(function() {
                 'btapp/torrent/all/' + torrent_match + '/file/all/*/properties/all/downloaded/',
                 'btapp/torrent/all/' + torrent_match + '/file/all/*/properties/all/streaming_url/',
                 'btapp/torrent/all/' + torrent_match + '/file/all/*/properties/all/name/',
-                'btapp/torrent/all/' + torrent_match + '/properties/all/'
+                'btapp/torrent/all/' + torrent_match + '/properties/all/',
+                'btapp/torrent/all/' + torrent_match + '/remove/',
+                'btapp/torrent/all/' + torrent_match + '/open_containing/'
             ];
 
             btapp.connect({
@@ -215,33 +217,87 @@ jQuery(function() {
             this.remove();
         },
         render: function() {
-            var eta, progress, files;
-            progress = this.model.get('properties').get('progress') / 10.0;
-            if(progress == 100) {
-                var date = new Date(this.model.get('properties').get('added_on') * 1000);
-                eta = 'Added ' + humaneDate(date);
-            } else {
-                var date = new Date(this.model.get('properties').get('eta') * 1000 + (new Date()).getTime());
-                eta = 'Complete In ' + humaneDate(date)
+            var progress = '?';
+            var eta = 'Waiting for metadata';
+            var files = [];
+            var ratio = '?';
+            var upload_speed = '?';
+            var download_speed = '?';
+
+            if(this.model.has('properties')) {
+                var properties = this.model.get('properties');
+
+                if(properties.has('progress')) {
+                    progress = properties.get('progress') / 10.0;
+
+                    if(progress == 100) {
+                        if(properties.has('added_on')) {
+                            var date = new Date(properties.get('added_on') * 1000);
+                            eta = 'Added ' + humaneDate(date);
+                        }
+                    } else {
+                        if(properties.has('eta') && properties.get('eta') !== 0) {
+                            var date = new Date(properties.get('eta') * 1000 + (new Date()).getTime());
+                            eta = 'Complete In ' + humaneDate(date)
+                        }
+                    }
+
+                    progress = progress + '%';
+                }
+
+                if(properties.has('download_speed')) {
+                    download_speed = readableTransferRate(properties.get('download_speed'));
+                }
+
+                if(properties.has('upload_speed')) {
+                    upload_speed = readableTransferRate(properties.get('upload_speed'));
+                }
+
+                if(properties.has('ratio')) {
+                    ratio = properties.get('ratio') / 1000.0;
+                }
             }
 
-            var files = this.model.get('file').map(function(file) { 
-                return {
-                    progress: 100 * file.get('properties').get('downloaded') / file.get('properties').get('size'),
-                    downloaded: readableFileSize(file.get('properties').get('downloaded')),
-                    size: readableFileSize(file.get('properties').get('size'))
-                };
-            });
+            if(this.model.has('file')) {
+                var files = this.model.get('file').map(function(file) {
+                    var progress = '?';
+                    var downloaded = '?';
+                    var size = '?';
+                    if(file.has('properties')) {
+                        var fproperties  = file.get('properties');
+                        if(fproperties.has('downloaded') && fproperties.has('size')) {
+                            progress = 100 * fproperties.get('downloaded') / fproperties.get('size');
+                            downloaded = readableFileSize(fproperties.get('downloaded'));
+                            size = readableFileSize(fproperties.get('size'));
+                        }
+                    }
+                    return {
+                        progress: progress,
+                        downloaded: downloaded,
+                        size: size
+                    };
+                });
+            }
 
             this.$el.html(this.template({
-                progress: progress + '%',
-                upload_speed: readableTransferRate(this.model.get('properties').get('upload_speed')),
-                download_speed: readableTransferRate(this.model.get('properties').get('download_speed')),
+                progress: progress,
+                upload_speed: upload_speed,
+                download_speed: download_speed,
                 eta: eta,
                 files: files,
-                ratio: this.model.get('properties').get('ratio') / 1000.0,
+                ratio: ratio,
                 hash: this.model.id
             }));
+
+            this.$el.find('.icon-folder-open').click(_.bind(function(e) {
+                e.preventDefault();
+                this.model.open_containing();
+            }, this));
+            this.$el.find('.icon-remove').click(_.bind(function(e) {
+                e.preventDefault();
+                this.model.remove();
+            }, this));
+
             return this;
         }
     });
