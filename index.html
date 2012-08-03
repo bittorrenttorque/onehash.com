@@ -105,7 +105,7 @@
     <script type="text/template" id="video_template">
         <div class="video_container">
             <video id="<%= id %>" class="video-js vjs-default-skin" controls
-                preload="none" width="auto" height="500"
+                preload="auto" width="auto" height="500"
                 data-setup="{}">
             </video>
             <p class="file_info"><%= name %></p>
@@ -114,7 +114,7 @@
 
     <script type="text/template" id="audio_template">
         <div class="audio-js-box vim-css">
-            <audio class="audio-js" controls preload="none">
+            <audio class="audio-js" controls preload>
                 <source src="<%= url %>">
             </audio>
             <p class="file_info"><%= name %></p>
