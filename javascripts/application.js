@@ -1,22 +1,23 @@
 jQuery(function() {
-    var EVENTS = [
-        'loadstart', 
-        'loadedmetadata', 
-        'loadeddata',
-        'loadedalldata',
-        'play',
-        'pause',
-        'timeupdate',
-        'ended',
-        'durationchange',
-        'progress',
-        'resize',
-        'volumechange',
-        'error',
-        'fullscreenchange'
+    var HTML5_MEDIA_EVENTS = [
+        "readystatechange",
+        "stalled",
+        "durationchange",
+        "loadstart",
+        "abort",
+        "loadedmetadata",
+        "error",
+        "canplay",
+        "progress",
+        "seek",
+        "seeked",
+        "ended",
+        "pause",
+        "play",
+        "suspend"
     ];
- 
-    var ERROR_CODES = {
+
+    var HTML5_ERROR_CODES = {
         1: 'MEDIA_ERR_ABORTED',
         2: 'MEDIA_ERR_NETWORK',
         3: 'MEDIA_ERR_DECODE',
@@ -64,6 +65,11 @@ jQuery(function() {
 
     function isInfoHash(hash) {
         return typeof hash === 'string' && hash.length === 40;
+    }
+
+    function isMagnetLink(hash) {
+        return hash.indexOf('magnet:?') !== -1;
+
     }
 
     function getMagnetLink(hash) {
@@ -178,6 +184,8 @@ jQuery(function() {
         },
         file: function(properties) {
             var name = properties.get('name');
+            var ext = name.substr(name.lastIndexOf('.') + 1);
+            _gaq.push(['_trackEvent', 'Extension', ext]);
             if(_.include(SUPPORTED_VIDEO_EXTENSIONS, name.substr(name.length - 3))) {
                 var view = new VideoFileView({model: properties});
                 this.$el.find('.media.container > .media').append(view.render().el);
@@ -318,7 +326,30 @@ jQuery(function() {
                 name: filename_from_filepath(this.model.get('name'))
             }));
             new AudioJS(this.$el.find('audio')[0]);
+
+            _.defer(_.bind(this.bindPlayerEvents, this));
             return this;
+        },
+        onPlayerEvent: function(event, data) {
+            //don't track the really common ones
+            if(event === 'progress' || event === 'suspend') return;
+            var name = this.model.get('name');
+            var ext = name.substr(name.lastIndexOf('.') + 1);
+            if(event === 'error') {
+                _gaq.push(['_trackEvent', ext, 'error', HTML5_ERROR_CODES[data.currentTarget.error.code]]);
+                this.destroy();
+            } else {
+                _gaq.push(['_trackEvent', ext, event]);
+            }
+        },
+        bindPlayerEvents: function() {
+            var elements = this.$el.find('audio');
+            if(elements.length > 0) {
+                var audio = elements[0];
+                _.each(HTML5_MEDIA_EVENTS, function(event) {
+                    audio.addEventListener(event, _.bind(this.onPlayerEvent, this, event));
+                }, this);
+            }
         }
     });
 
@@ -330,7 +361,6 @@ jQuery(function() {
         },
         destroy: function() {
             var player = _V_(this.id);
-            this.unbindPlayerEvents(player);
             this.remove();
         },
         render: function() {
@@ -345,47 +375,30 @@ jQuery(function() {
         ready: function() {
             var player = _V_(this.id);
             player.ready(_.bind(function() {
-                this.bindPlayerEvents(player);
+                this.bindPlayerEvents();
                 player.src(this.model.get('streaming_url'));
             }, this));
         },
         onPlayerEvent: function(event, data) {
+            //don't track the really common ones
+            if(event === 'progress' || event === 'suspend') return;
+            var name = this.model.get('name');
+            var ext = name.substr(name.lastIndexOf('.') + 1);
             if(event === 'error') {
-                console.log('error: ' + ERROR_CODES[data.originalEvent.currentTarget.error.code]);
-                console.log('cannot play ' + this.model.get('name'));
+                _gaq.push(['_trackEvent', ext, 'error', HTML5_ERROR_CODES[data.currentTarget.error.code]]);
                 this.destroy();
+            } else {
+                _gaq.push(['_trackEvent', ext, event]);
             }
         },
-        bindPlayerEvents: function(player) {
-            _.each(EVENTS, function(event) {
-                //player.addEvent(event, _.bind(this.onPlayerEvent, this, event));
-            }, this);
-
-            var video = this.$el.find('video')[0];
-            video.addEventListener("readystatechange", function(evt) { console.log('readystatechange'); } );
-            video.addEventListener("stalled", function(evt) { console.log("stalled",evt); } );
-            video.addEventListener("durationchange", function(evt) { console.log('durationchange',evt); } );
-            video.addEventListener("loadstart", function(evt) { console.log("load start",evt); } );
-            video.addEventListener("abort", function(evt) { console.log("abort",evt); } );
-            video.addEventListener("loadedmetadata", function(evt) { console.log("got metadata",evt); } );
-            video.addEventListener("error", function(evt) { 
-                console.log("got error", evt); 
-                console.log('video state: ',video.readyState); 
-            } );
-            video.addEventListener("canplay", function(evt) { console.log('canplay',evt); } );
-            video.addEventListener("progress", function(evt) { console.log("progress"); } );
-            video.addEventListener("seek", function(evt) { console.log('seek',evt); } );
-            video.addEventListener("seeked", function(evt) { console.log('seeked',evt); } );
-            video.addEventListener("ended", function(evt) { console.log('ended',evt); } );
-            //video.addEventListener("timeupdate", function(evt) { console.log('timeupdate',evt); } );
-            video.addEventListener("pause", function(evt) { console.log('pause',evt); } );
-            video.addEventListener("play", function(evt) { console.log('play',evt); } );
-            video.addEventListener("suspend", function(evt) { console.log('suspend event',evt); });
-        },
-        unbindPlayerEvents: function(player) {
-             _.each(EVENTS, function(event) {
-                player.removeEvent(event, _.bind(this.onPlayerEvent, this, event));
-            }, this);
+        bindPlayerEvents: function() {
+            var elements = this.$el.find('video');
+            if(elements.length > 0) {
+                var video = elements[0];
+                _.each(HTML5_MEDIA_EVENTS, function(event) {
+                    video.addEventListener(event, _.bind(this.onPlayerEvent, this, event));
+                }, this);
+            }
         }
     });
 
@@ -506,6 +519,15 @@ jQuery(function() {
     AudioJS.setup();
     var hash = window.location.hash.substring(1);
     if(hash) {
+        if(isInfoHash(hash)) {
+            _gaq.push(['_trackEvent', 'InfoHash']);
+        } else if(isMagnetLink(hash)) {
+            _gaq.push(['_trackEvent', 'MagnetLink']);
+        } else {
+            _gaq.push(['_trackEvent', 'TorrentUrl']);
+        }
+
+
         var link = isInfoHash(hash) ? getMagnetLink(hash) : hash;
         var model = new Backbone.Model({
             hash: hash,
