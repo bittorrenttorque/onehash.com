@@ -76,7 +76,7 @@
             <i class="icon-arrow-down"></i> <span class="download_speed"><%= download_speed %></span>
             <i class="icon-arrow-up"></i> <span class="upload_speed"><%= upload_speed %></span>
         </div>
-
+        <div class="swarm">Swarm: <%= peers %> / <%= seeds %> Peers / Seeds</div>
         <div class="eta"><%= eta %></div>
         <div class="ratio">UL/DL Ratio: <%= ratio %></div>
         <div class="files">
@@ -183,6 +183,11 @@
                     <br>
                     btapp.live('torrent * file * properties streaming_url', function(url, file_props, file) {<br>
                     &nbsp;&nbsp;&nbsp;&nbsp;//create an html5 video/audio tag and play!<br>
+                    });<br>
+                    <br>
+                    //lets add some content that will get detected by the code above.<br>
+                    btapp.on('add', function(add) {<br>
+                    &nbsp;&nbsp;&nbsp;&nbsp;add.torrent('http://apps.bittorrent.com/torrents/PrettyLights-Bittorrent.torrent');
                     });<br>
                 </div>
             </div>

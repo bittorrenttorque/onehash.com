@@ -5,6 +5,10 @@
 	min-height: 150px;
 }
 
+.container {
+	width: 750px !important;
+}
+
 html, body {
 	height: auto;
 	overflow-x: hidden;

@@ -253,6 +253,8 @@ jQuery(function() {
             var ratio = '?';
             var upload_speed = '?';
             var download_speed = '?';
+            var seeds = '?';
+            var peers = '?';
 
             if(this.model.has('properties')) {
                 var properties = this.model.get('properties');
@@ -286,6 +288,14 @@ jQuery(function() {
                 if(properties.has('ratio')) {
                     ratio = properties.get('ratio') / 1000.0;
                 }
+
+                if(properties.has('peers_in_swarm')) {
+                    peers = properties.get('peers_in_swarm');                    
+                }
+
+                if(properties.has('seeds_in_swarm')) {
+                    seeds = properties.get('seeds_in_swarm');
+                }
             }
 
             if(this.model.has('file')) {
@@ -316,6 +326,8 @@ jQuery(function() {
                 eta: eta,
                 files: files,
                 ratio: ratio,
+                seeds: seeds,
+                peers: peers,
                 hash: this.model.id
             }));
 
