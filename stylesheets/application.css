@@ -221,7 +221,8 @@ html, body {
 
 
 .input-large {
-	width: 300px;
+	width: 400px;
+	padding: 10px;
 }
 
 .vjs-big-play-button {
@@ -233,9 +234,18 @@ html, body {
 	width: auto !important;
 }
 
-.input.container .well {
+
+.input.container > div {
+	text-align: center;
+}
+.input.container .form-inline {
     text-align: center;
     margin-top: 30px;
+    position:absolute;
+    width: 750px;
+    padding: 40px 0;
+    top: 50%;
+    margin-top: -150px;
 }
 
 .well {
@@ -339,4 +349,11 @@ html, body {
 #content a {
 	font-weight: bold;
 	color: black;
+}
+
+#content {
+	position: absolute;
+	bottom: 0px;
+	height: 100px;
+	text-align: center;
 }

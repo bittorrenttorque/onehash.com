@@ -590,6 +590,8 @@ jQuery(function() {
     } else {
         var container = new InputContainerView();
         $('body').append(container.render().el);
+
+        $("form:not(.filter) :input:visible:enabled:first").focus();
     }
 
     function resize() {
