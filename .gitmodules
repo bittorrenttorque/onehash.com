@@ -10,3 +10,6 @@
 [submodule "audio-js"]
 	path = audio-js
 	url = git://github.com/dz0ny/AudioJS.git
+[submodule "javascripts/piecon"]
+	path = javascripts/piecon
+	url = git://github.com/lipka/piecon.git

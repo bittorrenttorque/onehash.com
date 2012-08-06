@@ -180,6 +180,9 @@ jQuery(function() {
 
                 var stats = new TorrentDownloadView({model: torrent});
                 this.$el.find('.stats.container .wrapper').append(stats.render().el);
+
+                var pie = new TorrentProgressIconView({model: torrent});
+                pie.render();
             }
         },
         file: function(properties) {
@@ -211,6 +214,25 @@ jQuery(function() {
                 name: this.model.get('properties').get('name')
             }));
             return this;
+        }
+    });
+
+    var TorrentProgressIconView = Backbone.View.extend({
+        initialize: function() {
+            Piecon.setOptions({
+                color: '#333', // Pie chart color
+                background: '#bbb', // Empty pie chart color
+                shadow: '#fff', // Outer ring color
+            });
+            this.model.get('properties').on('change:progress', this.render, this);
+        },
+        render: function() {
+            if(this.model.has('properties')) {
+                var properties = this.model.get('properties');
+                if(properties.has('progress')) {
+                    Piecon.setProgress(properties.get('progress') / 10.0);
+                }
+            }
         }
     });
 
