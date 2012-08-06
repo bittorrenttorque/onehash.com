@@ -243,9 +243,8 @@ html, body {
     margin-top: 30px;
     position:absolute;
     width: 750px;
-    padding: 40px 0;
     top: 50%;
-    margin-top: -150px;
+    margin-top: -50px;
 }
 
 .well {
