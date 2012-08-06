@@ -159,16 +159,16 @@ html, body {
 .torrent_name::before {
 	content: "― ";
 	font-weight: bold;
-	color: #3F8DAA;
+	color: #234552;
 }
 .torrent_name::after {
 	content: " ―";
 	font-weight: bold;
-	color: #3F8DAA;
+	color: #234552;
 }
 
 .torrent_name {
-	color: #3F8DAA;
+	color: #234552;
 	font-size: 2.7143em;
 	line-height: 1.2em;
 
