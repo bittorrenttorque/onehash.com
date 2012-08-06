@@ -223,6 +223,7 @@ jQuery(function() {
                 color: '#333', // Pie chart color
                 background: '#bbb', // Empty pie chart color
                 shadow: '#fff', // Outer ring color
+                fallback: 'force'
             });
             this.model.get('properties').on('change:progress', this.render, this);
         },
