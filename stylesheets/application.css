@@ -244,7 +244,14 @@ html, body {
     position:absolute;
     width: 750px;
     top: 50%;
-    margin-top: -50px;
+    margin-top: -100px;
+}
+
+.input.container .logo {
+	font-size: 100px;
+	line-height: 100px;
+	font-family: 'Fredericka the Great', cursive;
+	color: #234552;
 }
 
 .well {
