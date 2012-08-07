@@ -213,6 +213,21 @@ jQuery(function() {
             this.$el.html(this.template({
                 name: this.model.get('properties').get('name')
             }));
+            //lets track social linking
+
+            var classes = {
+                'addthis_button_facebook': 'facebook',
+                'addthis_button_twitter': 'twitter',
+                'addthis_button_google_plusone_share': 'google plus',
+                'addthis_button_wordpress': 'wordpress',
+                'addthis_button_stumbleupon': 'stumbleupon',
+                'addthis_button_gmail': 'gmail'
+            };
+            _.each(classes, function(val, key) {
+                this.$el.find('.' + key).click(_.bind(function(site) {
+                    _gaq.push(['_trackEvent', 'Share', site]);
+                }, this, val));
+            }, this);
             return this;
         }
     });
