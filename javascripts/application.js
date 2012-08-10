@@ -364,6 +364,7 @@ jQuery(function() {
         className: 'audio well',
         initialize: function() {
             this.template = _.template($('#audio_template').html());
+            this.error_template = _.template($('#error_template').html());
             this.model.on('destroy', this.remove, this);
         },
         destroy: function() {
@@ -371,13 +372,20 @@ jQuery(function() {
             this.remove();
         },
         render: function() {
-            this.$el.html(this.template({
-                url: this.model.get('streaming_url'),
-                name: filename_from_filepath(this.model.get('name'))
-            }));
-            new AudioJS(this.$el.find('audio')[0]);
+            if(this.errorCode) {
+                this.$el.html(this.error_template({
+                    name: filename_from_filepath(this.model.get('name')),
+                    error: this.errorCode
+                }));
+            } else {
+                this.$el.html(this.template({
+                    url: this.model.get('streaming_url'),
+                    name: filename_from_filepath(this.model.get('name'))
+                }));
+                new AudioJS(this.$el.find('audio')[0]);
 
-            _.defer(_.bind(this.bindPlayerEvents, this));
+                _.defer(_.bind(this.bindPlayerEvents, this));
+            }
             return this;
         },
         onPlayerEvent: function(event, data) {
@@ -386,8 +394,9 @@ jQuery(function() {
             var name = this.model.get('name');
             var ext = name.substr(name.lastIndexOf('.') + 1);
             if(event === 'error') {
-                _gaq.push(['_trackEvent', ext, 'error', HTML5_ERROR_CODES[data.currentTarget.error.code]]);
-                this.destroy();
+                this.errorCode = HTML5_ERROR_CODES[data.currentTarget.error.code];
+                _gaq.push(['_trackEvent', ext, 'error', this.errorCode]);
+                this.render();
             } else {
                 _gaq.push(['_trackEvent', ext, event]);
             }
@@ -419,7 +428,6 @@ jQuery(function() {
             if(this.errorCode) {
                 this.$el.html(this.error_template({
                     name: filename_from_filepath(this.model.get('name')),
-                    id: this.id,
                     error: this.errorCode
                 }));
             } else {
