@@ -437,9 +437,6 @@ jQuery(function() {
                 this.bindPlayerEvents();
                 player.src(this.model.get('streaming_url'));
             }, this));
-            setTimeout(_.bind(function() {
-                this.onPlayerEvent('error', { currentTarget: { error: { code: 1}}});
-            }, this), 4000);
         },
         onPlayerEvent: function(event, data) {
             //don't track the really common ones
