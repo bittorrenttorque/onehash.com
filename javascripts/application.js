@@ -407,6 +407,7 @@ jQuery(function() {
         className: 'video well',
         initialize: function() {
             this.template = _.template($('#video_template').html());
+            this.error_template = _.template($('#error_template').html());
             this.model.on('destroy', this.destroy, this);
         },
         destroy: function() {
@@ -415,11 +416,19 @@ jQuery(function() {
         },
         render: function() {
             this.id = 'video' + Math.floor(Math.random() * 1024);
-            this.$el.html(this.template({
-                name: filename_from_filepath(this.model.get('name')),
-                id: this.id
-            }));
-            _.defer(_.bind(this.ready, this));
+            if(this.errorCode) {
+                this.$el.html(this.error_template({
+                    name: filename_from_filepath(this.model.get('name')),
+                    id: this.id,
+                    error: this.errorCode
+                }));
+            } else {
+                this.$el.html(this.template({
+                    name: filename_from_filepath(this.model.get('name')),
+                    id: this.id
+                }));
+                _.defer(_.bind(this.ready, this));
+            }
             return this;
         },
         ready: function() {
@@ -428,6 +437,9 @@ jQuery(function() {
                 this.bindPlayerEvents();
                 player.src(this.model.get('streaming_url'));
             }, this));
+            setTimeout(_.bind(function() {
+                this.onPlayerEvent('error', { currentTarget: { error: { code: 1}}});
+            }, this), 4000);
         },
         onPlayerEvent: function(event, data) {
             //don't track the really common ones
@@ -435,8 +447,9 @@ jQuery(function() {
             var name = this.model.get('name');
             var ext = name.substr(name.lastIndexOf('.') + 1);
             if(event === 'error') {
-                _gaq.push(['_trackEvent', ext, 'error', HTML5_ERROR_CODES[data.currentTarget.error.code]]);
-                this.destroy();
+                this.errorCode = HTML5_ERROR_CODES[data.currentTarget.error.code];
+                _gaq.push(['_trackEvent', ext, 'error', this.errorCode]);
+                this.render();
             } else {
                 _gaq.push(['_trackEvent', ext, event]);
             }

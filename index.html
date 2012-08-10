@@ -105,6 +105,12 @@
 <!-- AddThis Button END -->
         </div>
     </script>
+    <script type="text/template" id="error_template">
+        <div class="error_container">
+            <p>Bummer: <%= error %> ... Video streaming while the torrent downloads is still a work in progress. Waiting for the contents to complete downloading, then refreshing the page may allow you to watch the video successfully.</p>
+            <p class="file_info"><%= name %></p>
+        </div>
+    </script>
     <script type="text/template" id="video_template">
         <div class="video_container">
             <video id="<%= id %>" class="video-js vjs-default-skin" controls
