@@ -168,8 +168,8 @@ jQuery(function() {
             }
             var hash = this.model.get('hash');
             if( (isInfoHash(hash) && torrent.id === hash.toUpperCase()) ||
-                properties.get('download_url') === hash ||
-                properties.get('uri') === hash
+                properties.get('download_url') === decodeURIComponent(hash) ||
+                properties.get('uri') === decodeURIComponent(hash)
             ) {
                 this.$el.find('.media.container_background').removeClass('collapsed').addClass('expanded');
 
