@@ -187,12 +187,12 @@ jQuery(function() {
         },
         file: function(properties) {
             var name = properties.get('name');
-            var ext = name.substr(name.lastIndexOf('.') + 1);
+            var ext = name.substr(name.lastIndexOf('.') + 1).toLowerCase();
             _gaq.push(['_trackEvent', 'Extension', ext]);
-            if(_.include(SUPPORTED_VIDEO_EXTENSIONS, name.substr(name.length - 3))) {
+            if(_.include(SUPPORTED_VIDEO_EXTENSIONS, ext)) {
                 var view = new VideoFileView({model: properties});
                 this.$el.find('.media.container > .media').append(view.render().el);
-            } else if(_.include(SUPPORTED_AUDIO_EXTENSIONS, name.substr(name.length - 3))) {
+            } else if(_.include(SUPPORTED_AUDIO_EXTENSIONS, ext)) {
                 var view = new AudioFileView({model: properties});
                 this.$el.find('.media.container > .media').append(view.render().el);
             }
