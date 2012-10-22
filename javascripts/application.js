@@ -25,7 +25,7 @@ jQuery(function() {
     };
 
     var SUPPORTED_VIDEO_EXTENSIONS = [
-         'mp4'
+         'mp4', 'mkv'
     ];
 
     var SUPPORTED_AUDIO_EXTENSIONS = [
