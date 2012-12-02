@@ -10,3 +10,6 @@
 [submodule "javascripts/piecon"]
 	path = javascripts/piecon
 	url = git://github.com/lipka/piecon.git
+[submodule "javascripts/jStorage"]
+	path = javascripts/jStorage
+	url = git://github.com/andris9/jStorage.git
