@@ -4,9 +4,6 @@
 [submodule "javascripts/backbrace"]
 	path = javascripts/backbrace
 	url = git://github.com/bittorrenttorque/backbrace.git
-[submodule "javascripts/jStorage"]
-	path = javascripts/jStorage
-	url = git://github.com/andris9/jStorage.git
 [submodule "audio-js"]
 	path = audio-js
 	url = git://github.com/dz0ny/AudioJS.git
