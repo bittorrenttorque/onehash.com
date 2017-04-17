@@ -5,7 +5,7 @@ a simple way to consume and share torrent contents
 
 using [font-awesome](https://github.com/FortAwesome/Font-Awesome)!
 
-#License
+# License
 Copyright 2012 Patrick Williams, BitTorrent Inc.
 http://torque.bittorrent.com/
 
